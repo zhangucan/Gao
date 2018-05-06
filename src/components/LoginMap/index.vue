@@ -29,7 +29,8 @@ export default {
       const map = new mapboxgl.Map({
         container: this.$refs.basicMapbox,
         style: 'mapbox://styles/mapbox/satellite-v9',
-        zoom: 0
+        center: [113.165, 33.762],
+        zoom: 11
       })
       map.on('load', function() {
         d3.json('http://127.0.0.1:9528/static/hike.geojson', function(err, data) {

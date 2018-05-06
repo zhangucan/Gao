@@ -26,7 +26,7 @@
         <span> password: admin</span>
       </div>
     </el-form>
-    <mapbox-map mapWidth="100%" mapHeight="600px"></mapbox-map>
+    <mapbox-map mapWidth="100%" mapHeight="100%"></mapbox-map>
   </div>
 </template>
 
