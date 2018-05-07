@@ -8,14 +8,15 @@
   </div>
 </template>
 <script>
-import * as bigscreen from '../../api/bigscreen'
-import BigScreenCard from '../../components/BigScreenCard'
-import BigScreenLayout from '../../components/BigScreenLayout'
+import MapCard from '../../components/MapCard'
+import MapDetail from '../../components/MapDetail'
+import AddMap from '../../components/AddMap'
 export default {
   name: 'bigscreen',
   components: {
-    BigScreenCard,
-    BigScreenLayout
+    MapCard,
+    MapDetail,
+    AddMap
   },
   data() {
     return {
@@ -23,13 +24,10 @@ export default {
   },
   computed: {
     view() {
-      return this.$store.state.bigscreen.currentView
+      return this.$store.state.map.currentView
     }
   },
   methods: {
-    test() {
-      bigscreen.fetchLayout({ title: '白龟山湿地公园' })
-    }
   }
 }
 </script>

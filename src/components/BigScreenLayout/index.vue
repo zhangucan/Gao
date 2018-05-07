@@ -1,0 +1,66 @@
+<template>
+  <div class="app-container">
+    <grid-layout
+    :layout='layout'
+    :col-num='12'
+    :row-height='30'
+    :is-draggable='true'
+    :is-resizable='true'
+    :is-mirrored='false'
+    :vertical-compact='true'
+    :margin='[30,30,30,30]'
+    :use-css-transforms='true'
+  >
+      <grid-item class="grid" v-for='(item, index) in layout'
+        :x='item.x'
+        :y='item.y'
+        :w='item.w'
+        :h='item.h'
+        :i='item.i'
+        :key='index'>
+        <button class="pan-btn blue-btn detail" @click="showDetail(item.title, item.component)">修改内容</button>
+      </grid-item>
+    </grid-layout>
+  </div>
+</template>
+<script>
+import VueGridLayout from 'vue-grid-layout'
+var GridLayout = VueGridLayout.GridLayout
+var GridItem = VueGridLayout.GridItem
+export default {
+  methods: {
+    showDetail(title, component) {
+    }
+  },
+  components: {
+    GridLayout,
+    GridItem
+  },
+  computed: {
+    layout() {
+      return [...this.$store.state.bigscreen.gridLayout]
+    }
+  },
+  beforeCreate() {
+    this.$store.dispatch('FetchLayout')
+  }
+}
+</script>
+<style lang="scss" scoped>
+.grid{
+  background: #adbed4;
+  border-radius: 4px 
+}
+.mixin-components-container {
+  background-color: #f0f2f5;
+  padding: 30px;
+  min-height: calc(100vh - 84px);
+}
+.component-item{
+  min-height: 100px;
+}
+.detail{
+  float: left;
+  padding: 5px 5px;
+}
+</style>

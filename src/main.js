@@ -14,7 +14,10 @@ import store from './store'
 
 import '@/icons' // icon
 import '@/permission' // permission control
+import contentmenu from 'v-contextmenu'
+import 'v-contextmenu/dist/index.css'
 
+Vue.use(contentmenu)
 Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false

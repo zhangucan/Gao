@@ -48,6 +48,18 @@ export const constantRouterMap = [
       }
     ]
   },
+  {
+    path: '/mapmange',
+    component: Layout,
+    children: [
+      {
+        path: 'mapmange',
+        name: 'mapmange',
+        component: () => import('@/views/mapmange/index'),
+        meta: { title: '地图管理', icon: 'table' }
+      }
+    ]
+  },
   // {
   //   path: '/example',
   //   component: Layout,

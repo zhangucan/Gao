@@ -2514,10 +2514,6 @@ es-to-primitive@^1.1.1:
 es5-ext@^0.10.14, es5-ext@^0.10.35, es5-ext@^0.10.9, es5-ext@~0.10.14:
   version "0.10.42"
   resolved "http://registry.npm.taobao.org/es5-ext/download/es5-ext-0.10.42.tgz#8c07dd33af04d5dcd1310b5cef13bea63a89ba8d"
-  dependencies:
-    es6-iterator "~2.0.3"
-    es6-symbol "~3.1.1"
-    next-tick "1"
 
 es6-iterator@^2.0.1, es6-iterator@~2.0.1, es6-iterator@~2.0.3:
   version "2.0.3"
@@ -3109,8 +3105,6 @@ from2@^2.1.0:
 fs-minipass@^1.2.5:
   version "1.2.5"
   resolved "http://registry.npm.taobao.org/fs-minipass/download/fs-minipass-1.2.5.tgz#06c277218454ec288df77ada54a03b8702aacb9d"
-  dependencies:
-    minipass "^2.2.1"
 
 fs-write-stream-atomic@^1.0.8:
   version "1.0.10"
@@ -7098,6 +7092,12 @@ uuid@^3.0.0, uuid@^3.1.0:
   version "3.2.1"
   resolved "http://registry.npm.taobao.org/uuid/download/uuid-3.2.1.tgz#12c528bb9d58d0b9265d9a2f6f0fe8be17ff1f14"
 
+v-contextmenu@^2.5.1:
+  version "2.5.1"
+  resolved "http://registry.npm.taobao.org/v-contextmenu/download/v-contextmenu-2.5.1.tgz#f54f6f123050688cef116600e9e4f5a63a2878f8"
+  dependencies:
+    vue "^2.0.0"
+
 validate-npm-package-license@^3.0.1:
   version "3.0.3"
   resolved "http://registry.npm.taobao.org/validate-npm-package-license/download/validate-npm-package-license-3.0.3.tgz#81643bcbef1bdfecd4623793dc4648948ba98338"
@@ -7200,6 +7200,10 @@ vue-template-es2015-compiler@^1.6.0:
 vue@2.5.10:
   version "2.5.10"
   resolved "http://registry.npm.taobao.org/vue/download/vue-2.5.10.tgz#dcd772e2594ba994145f2f09522149d9a1e7841a"
+
+vue@^2.0.0:
+  version "2.5.16"
+  resolved "http://registry.npm.taobao.org/vue/download/vue-2.5.16.tgz#07edb75e8412aaeed871ebafa99f4672584a0085"
 
 vuex@3.0.1:
   version "3.0.1"

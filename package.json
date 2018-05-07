@@ -21,6 +21,7 @@
     "mapbox-gl": "^0.45.0-beta.1",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
+    "v-contextmenu": "^2.5.1",
     "vue": "2.5.10",
     "vue-grid-layout": "^2.1.13",
     "vue-router": "3.0.1",
