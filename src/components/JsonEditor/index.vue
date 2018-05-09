@@ -1,6 +1,6 @@
 <template>
   <div class="json-editor">
-    <textarea ref="textarea" style="max-width: 600px;"></textarea>
+    <textarea ref="textarea" style="height: 600px;"></textarea>
   </div>
 </template>
 

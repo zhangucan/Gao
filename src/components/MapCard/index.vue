@@ -1,18 +1,18 @@
 <template>
   <el-row>
-    <el-col :span="5" v-for="(item, index) in mapList" :key="index" :offset="index > 0 ? 2 : 0">
+    <el-col :span="5" class="margin15" v-for="(item, index) in mapList" :key="index" >
       <el-card :body-style="{ padding: '0px' }">
         <img src="../../../static/bigscreen/baiguihu.png" class="image">
         <div style="padding: 14px;">
-          <span>test</span>
+          <span>{{item.title}}</span>
           <div class="bottom clearfix">
             <time class="time">2018-05-05 20:20</time>
-            <el-button type="text" class="button">查看</el-button>
+            <el-button type="text" class="button" @click="setView(item._id)">查看</el-button>
           </div>
         </div>
       </el-card>
     </el-col>
-    <el-col :span="5" :offset="1" style="text-align: center; cursor:pointer">
+    <el-col :span="5" class="margin15" style="text-align: center; cursor:pointer">
       <el-card :body-style="{ padding: '0px' }">
         <i class="el-icon-plus add-srceen" @click="addMap()"></i>
       </el-card>
@@ -23,24 +23,17 @@
 export default {
   computed: {
     mapList() {
-      if (this.$store.state.map.mapList) {
-        return [...this.$store.state.map.mapList]
-      } else {
-        return []
-      }
+      return this.$store.state.map.mapLsit
     }
   },
   methods: {
-    setView() {
+    async setView(id) {
+      this.loading = true
       const obj = { // 数据暂时写死
-        view: 'BigScreenLayout',
-        title: '白龟山湿地公园'
+        view: 'MapDetail'
       }
-      this.$store.dispatch('SetMapView', obj).then(() => {
-        this.loading = false
-      }).catch(() => {
-        this.loading = false
-      })
+      await this.$store.dispatch('FetchMap', { _id: id })
+      await this.$store.dispatch('SetMapView', obj)
     },
     addMap() {
       const obj = {
@@ -58,6 +51,7 @@ export default {
     }
   },
   beforeCreate() {
+    this.loading = true
     this.$store.dispatch('FetchAllMap').then(() => {
       this.loading = false
     }).catch(() => {
@@ -106,6 +100,9 @@ export default {
 }
 .add-srceen:hover {
   color: #989898 
+}
+.margin15{
+  margin: 15px;
 }
 </style>
 

@@ -36,12 +36,16 @@
               <span>矢量图层</span>
             </div>
             <el-table :data="vectorList" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row  @selection-change="handleSelectionChange">
-               <el-table-column
-                type="selection"
-                width="55">
+              <el-table-column
+                type="index"
+                width="50">
               </el-table-column>
               <el-table-column prop="type" label="数据类型" min-width="200" align="center"></el-table-column>
               <el-table-column align="center" prop="displayTime" label="日期" min-width="200"></el-table-column>
+              <el-table-column
+                type="selection"
+                width="55">
+              </el-table-column>
             </el-table>
           </el-card>
         </el-row>
@@ -51,7 +55,7 @@
             <div slot="header" class="clearfix">
               <span>地图预览</span>
             </div>
-            <map-show mapWidth="100%" mapHeight="600px" :map-url="tempCurrentRaster" :vector-list="tempVectorList" :lon="lon" :lat="lat"></map-show>
+            <map-show mapWidth="100%" mapHeight="600px" :map-url="tempCurrentRaster" :choose-list="chooseList" :vector-list="tempVectorList" :lon="lon" :lat="lat"></map-show>
           </el-card>
       </el-col>
     </el-row>
@@ -64,8 +68,9 @@ export default {
     changeMap(row) {
       this.tempCurrentRaster = row.address
     },
-    handleSelectionChange(val) {
-      this.tempVectorList = val
+    handleSelectionChange(selection) {
+      // this.tempVectorList = val
+      this.chooseList = selection
     }
   },
   components: {
@@ -103,6 +108,7 @@ export default {
     return {
       listLoading: false,
       tempVectorList: this.vectorList,
+      chooseList: [],
       tempCurrentRaster: this.currentVector
     }
   }

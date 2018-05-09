@@ -12,6 +12,7 @@ const bigscreen = {
       state.gridLayout = data
     },
     FETCH_ALL_MAP: (state, data) => {
+      console.log(data)
       state.mapLsit = data
     }
   },
@@ -24,8 +25,7 @@ const bigscreen = {
     },
     FetchMap({ commit, state }, obj) {
       return new Promise((resolve, reject) => {
-        mapApi.fetchMap({ title: state.currentLayout }).then(response => {
-          console.log(response)
+        mapApi.fetchMap(obj).then(response => {
           const data = response.gridItems
           commit('FETCH_LAYOUT', data)
           resolve()
@@ -37,9 +37,7 @@ const bigscreen = {
     FetchAllMap({ commit, state }, obj) {
       return new Promise((resolve, reject) => {
         mapApi.fetchMap().then(response => {
-          console.log(response.mapLsit)
-          const data = response.mapList
-          commit('FETCH_ALL_MAP', data)
+          commit('FETCH_ALL_MAP', response.mapLsit)
           resolve()
         }).catch(error => {
           reject(error)

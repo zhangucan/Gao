@@ -2,16 +2,24 @@ import request from '@/utils/request'
 
 export function fetchMap(query) {
   return request({
-    url: '/map',
+    url: '/maps',
     method: 'get',
     params: query
   })
 }
 
-export function saveMap(query) {
+export function saveMap(data) {
   return request({
-    url: '/map',
+    url: '/map/savemap',
     method: 'post',
-    params: query
+    data
+  })
+}
+
+export function saveVectorFeature(data) {
+  return request({
+    url: '/map/savevectorfeature',
+    method: 'post',
+    data
   })
 }

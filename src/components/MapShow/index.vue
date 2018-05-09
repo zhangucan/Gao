@@ -24,17 +24,9 @@ export default {
     },
     vectorList: {
       type: Array
-    }
-  },
-  watch: {
-    mapUrl(val) {
-      this.changeStyle(val)
     },
-    vectorList(val) {
-      const _this = this
-      val.forEach((item, index) => {
-        _this.addGeoJson(item.vectorFeatures)
-      })
+    chooseList: {
+      type: Array
     }
   },
   data() {
@@ -74,10 +66,17 @@ export default {
         maxZoom: 18,
         zoom: 16
       })
-      _this.map.addSource('customeFeature', {
-        type: 'geojson'
+      _this.map.on('load', function() {
+        _this.map.addControl(new mapboxgl.NavigationControl(), 'top-left')
+        if (_this.vectorList && _this.vectorList.length > 0) {
+          _this.vectorList.forEach((item, index) => {
+            _this.map.addSource(`customeFeature${item.indexId}`, {
+              type: 'geojson',
+              data: item.vectorFeatures
+            })
+          })
+        }
       })
-      this.map.addControl(new mapboxgl.NavigationControl(), 'top-left')
     },
     changeStyle(url) {
       console.log(url)
@@ -98,54 +97,49 @@ export default {
         }]
       })
     },
-    removeVectorlayer() {
+    removeVector(id) {
       const _this = this
-      if (_this.map.getLayer('line')) {
-        _this.map.removeLayer('line')
+      if (_this.map.getLayer(`line${id}`)) {
+        _this.map.removeLayer(`line${id}`)
       }
-      if (_this.map.getLayer('area')) {
-        _this.map.removeLayer('area')
+      if (_this.map.getLayer(`area${id}`)) {
+        _this.map.removeLayer(`area${id}`)
       }
-      if (_this.map.getLayer('point')) {
-        _this.map.removeLayer('point')
+      if (_this.map.getLayer(`point${id}`)) {
+        _this.map.removeLayer(`point${id}`)
       }
     },
-    addGeoJson(geojson) {
+    addGeoJson(id) {
       const _this = this
-      _this.map.on('load', function() {
-        console.log(geojson)
-        _this.map.getSource('customeFeature').setData(geojson)
-        _this.removeVectorlayer()
-        _this.map.addLayer({
-          'id': 'line',
-          'type': 'line',
-          'source': 'customeFeature',
-          'paint': {
-            'line-color': '#888',
-            'line-width': 8
-          },
-          'filter': ['==', '$type', 'LineString']
-        })
-        _this.map.addLayer({
-          'id': 'area',
-          'type': 'fill',
-          'source': 'customeFeature',
-          'paint': {
-            'fill-color': '#888888',
-            'fill-opacity': 0.4
-          },
-          'filter': ['==', '$type', 'Polygon']
-        })
-        _this.map.addLayer({
-          'id': 'point',
-          'type': 'circle',
-          'source': 'customeFeature',
-          'paint': {
-            'circle-radius': 6,
-            'circle-color': '#B42222'
-          },
-          'filter': ['==', '$type', 'Point']
-        })
+      _this.map.addLayer({
+        'id': `line${id}`,
+        'type': 'line',
+        'source': `customeFeature${id}`,
+        'paint': {
+          'line-color': '#888',
+          'line-width': 8
+        },
+        'filter': ['==', '$type', 'LineString']
+      })
+      _this.map.addLayer({
+        'id': `area${id}`,
+        'type': 'fill',
+        'source': `customeFeature${id}`,
+        'paint': {
+          'fill-color': '#888888',
+          'fill-opacity': 0.4
+        },
+        'filter': ['==', '$type', 'Polygon']
+      })
+      _this.map.addLayer({
+        'id': `point${id}`,
+        'type': 'circle',
+        'source': `customeFeature${id}`,
+        'paint': {
+          'circle-radius': 6,
+          'circle-color': '#B42222'
+        },
+        'filter': ['==', '$type', 'Point']
       })
     }
   },
@@ -156,6 +150,24 @@ export default {
         height: this.mapHeight
       }
       return styleObj
+    }
+  },
+  watch: {
+    mapUrl(val) {
+      this.changeStyle(val)
+    },
+    chooseList(val, oldVal) {
+      const _this = this
+      if (oldVal && oldVal.length > 0) {
+        oldVal.forEach(item => {
+          _this.removeVector(item.indexId)
+        })
+      }
+      if (val && val.length > 0) {
+        val.forEach(item => {
+          _this.addGeoJson(item.indexId)
+        })
+      }
     }
   }
 }
