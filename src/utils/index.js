@@ -2,6 +2,16 @@
  * Created by jiachenpan on 16/11/18.
  */
 
+export function parseJson(data) {
+  return new Promise((resolve, reject) => {
+    try {
+      const a = JSON.parse(data)
+      resolve(a)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
 export function parseTime(time, cFormat) {
   if (arguments.length === 0) {
     return null
