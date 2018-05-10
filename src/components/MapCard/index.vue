@@ -29,10 +29,11 @@ export default {
   methods: {
     async setView(id) {
       this.loading = true
-      const obj = { // 数据暂时写死
-        view: 'MapDetail'
+      const obj = {
+        view: 'AddMap'
       }
       await this.$store.dispatch('FetchMap', { _id: id })
+      this.loading = false
       await this.$store.dispatch('SetMapView', obj)
     },
     addMap() {

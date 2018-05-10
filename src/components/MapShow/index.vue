@@ -68,9 +68,11 @@ export default {
       })
       _this.map.on('load', function() {
         _this.map.addControl(new mapboxgl.NavigationControl(), 'top-left')
+        console.log('geojson')
+        console.log(_this.vectorList)
         if (_this.vectorList && _this.vectorList.length > 0) {
           _this.vectorList.forEach((item, index) => {
-            _this.map.addSource(`customeFeature${item.indexId}`, {
+            _this.map.addSource(`customeFeature${index}`, {
               type: 'geojson',
               data: item.vectorFeatures
             })
@@ -79,7 +81,6 @@ export default {
       })
     },
     changeStyle(url) {
-      console.log(url)
       const _this = this
       _this.map.setStyle({
         'version': 8,
@@ -96,6 +97,14 @@ export default {
           'source': 'raster-tiles'
         }]
       })
+      if (_this.vectorList && _this.vectorList.length > 0) {
+        _this.vectorList.forEach((item, index) => {
+          _this.map.addSource(`customeFeature${index}`, {
+            type: 'geojson',
+            data: item.vectorFeatures
+          })
+        })
+      }
     },
     removeVector(id) {
       const _this = this
@@ -154,18 +163,19 @@ export default {
   },
   watch: {
     mapUrl(val) {
+      console.log(val)
       this.changeStyle(val)
     },
     chooseList(val, oldVal) {
       const _this = this
       if (oldVal && oldVal.length > 0) {
-        oldVal.forEach(item => {
-          _this.removeVector(item.indexId)
+        oldVal.forEach((item, index) => {
+          _this.removeVector(index)
         })
       }
       if (val && val.length > 0) {
-        val.forEach(item => {
-          _this.addGeoJson(item.indexId)
+        val.forEach((item, index) => {
+          _this.addGeoJson(index)
         })
       }
     }

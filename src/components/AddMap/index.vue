@@ -199,11 +199,32 @@ export default {
       }
     }
   },
+  mounted() {
+    this.vectorList = []
+    this.rasterList = []
+    if (this.$store.state.map.mapInfo) {
+      const map = this.$store.state.map.mapInfo.map
+      const vectorFeatures = this.$store.state.map.mapInfo.vectorFeatures
+      this.mapId = map._id
+      this.mapForm.title = map.title
+      this.mapForm.lon = map.lon
+      this.mapForm.lat = map.lat
+      this.mapForm.desc = map.desc
+      map.rasterLayers.forEach((item, index) => {
+        this.rasterList.push(item)
+      })
+      vectorFeatures.forEach((item, index) => {
+        item.vectorFeatures = item[item.featureType]
+        this.vectorList.push(item)
+      })
+    }
+  },
   data() {
     return {
       isFinish: false,
       value: { 'type': '空' },
       active: 0,
+      mapId: 1,
       mapState: 0,
       mapForm: {
         title: '',
@@ -230,21 +251,15 @@ export default {
     async submitMapInfo() {
       this.loading = true
       const map = {
+        _id: this.mapId,
         title: this.mapForm.title,
         lon: this.mapForm.lon,
         lat: this.mapForm.lat,
         desc: this.mapForm.desc,
-        rasterLayers: this.rasterList
+        rasterLayers: this.rasterList,
+        vectorFeatures: this.vectorList
       }
-      const data = await mapApi.saveMap(map)
-      // type: this.vectorForm.type,
-      // displayTime: utils.parseTime(this.vectorForm.displayTime),
-      // vectorFeatures: data,
-      // indexId: this.vectorList.length
-      this.vectorList.forEach(async item => {
-        item.mapId = data.mapId
-        await mapApi.saveVectorFeature(item)
-      })
+      await mapApi.saveMap(map)
       const obj = {
         view: 'MapCard'
       }
@@ -313,8 +328,7 @@ export default {
         const obj = {
           type: this.vectorForm.type,
           displayTime: utils.parseTime(this.vectorForm.displayTime),
-          vectorFeatures: data,
-          indexId: this.vectorList.length
+          vectorFeatures: data
         }
         this.vectorList.push(obj)
         this.vectorForm.displayTime = ''
@@ -327,9 +341,6 @@ export default {
         })
       })
     }
-  },
-  created() {
-    // this.fetchData()
   }
 }
 </script>

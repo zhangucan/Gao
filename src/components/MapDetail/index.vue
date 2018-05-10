@@ -35,7 +35,7 @@
             <div slot="header" class="clearfix">
               <span>矢量图层</span>
             </div>
-            <el-table :data="vectorList" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row  @selection-change="handleSelectionChange">
+            <el-table ref="vectorTable" :data="vectorList" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row  @selection-change="handleSelectionChange">
               <el-table-column
                 type="index"
                 width="50">
@@ -66,6 +66,7 @@ import MapShow from '../MapShow/index'
 export default {
   methods: {
     changeMap(row) {
+      this.$refs.vectorTable.clearSelection()
       this.tempCurrentRaster = row.address
     },
     handleSelectionChange(selection) {

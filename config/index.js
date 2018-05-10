@@ -22,6 +22,22 @@ module.exports = {
       "/map/*": {
         target: 'http://127.0.0.1:3000',
         changeOrigin: true,
+      },
+      "/griditem": {
+        target: 'http://127.0.0.1:3000',
+        changeOrigin: true,
+      },
+      "/gridlayout": {
+        target: 'http://127.0.0.1:3000',
+        changeOrigin: true,
+      },
+      "/gridlayoutlist": {
+        target: 'http://127.0.0.1:3000',
+        changeOrigin: true,
+      },
+      "/vector": {
+        target: 'http://127.0.0.1:3000',
+        changeOrigin: true,
       }
     },
 

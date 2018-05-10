@@ -11,11 +11,13 @@
 import * as bigscreen from '../../api/bigscreen'
 import BigScreenCard from '../../components/BigScreenCard'
 import BigScreenLayout from '../../components/BigScreenLayout'
+import BigScreenItem from '../../components/BigScreenItem'
 export default {
   name: 'bigscreen',
   components: {
     BigScreenCard,
-    BigScreenLayout
+    BigScreenLayout,
+    BigScreenItem
   },
   data() {
     return {

@@ -18,7 +18,7 @@
         :h='item.h'
         :i='item.i'
         :key='index'>
-        <button class="pan-btn blue-btn detail" @click="showDetail(item.title, item.component)">修改内容</button>
+        <button class="pan-btn blue-btn detail" @click="showDetail(item)">修改内容</button>
       </grid-item>
     </grid-layout>
   </div>
@@ -29,7 +29,14 @@ var GridLayout = VueGridLayout.GridLayout
 var GridItem = VueGridLayout.GridItem
 export default {
   methods: {
-    showDetail(title, component) {
+    async showDetail(item) {
+      this.loading = true
+      const obj = {
+        view: 'BigScreenItem'
+      }
+      await this.$store.dispatch('FetchGridItem', { _id: item._id })
+      this.loading = false
+      await this.$store.dispatch('SetScreenView', obj)
     }
   },
   components: {

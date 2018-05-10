@@ -2,17 +2,21 @@ import * as mapApi from '../../api/map'
 const bigscreen = {
   state: {
     currentView: 'MapCard',
-    mapLsit: []
+    mapLsit: [],
+    mapInfo: null
   },
   mutations: {
     SET_MAP_VIEW: (state, obj) => {
       state.currentView = obj.view
     },
     FETCH_MAP: (state, data) => {
-      state.gridLayout = data
+      const obj = {
+        map: data.map,
+        vectorFeatures: data.vectorFeatures
+      }
+      state.mapInfo = obj
     },
     FETCH_ALL_MAP: (state, data) => {
-      console.log(data)
       state.mapLsit = data
     }
   },
@@ -26,8 +30,7 @@ const bigscreen = {
     FetchMap({ commit, state }, obj) {
       return new Promise((resolve, reject) => {
         mapApi.fetchMap(obj).then(response => {
-          const data = response.gridItems
-          commit('FETCH_LAYOUT', data)
+          commit('FETCH_MAP', response)
           resolve()
         }).catch(error => {
           reject(error)
@@ -36,7 +39,7 @@ const bigscreen = {
     },
     FetchAllMap({ commit, state }, obj) {
       return new Promise((resolve, reject) => {
-        mapApi.fetchMap().then(response => {
+        mapApi.fetchMapList().then(response => {
           commit('FETCH_ALL_MAP', response.mapLsit)
           resolve()
         }).catch(error => {
