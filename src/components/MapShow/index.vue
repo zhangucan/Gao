@@ -68,11 +68,10 @@ export default {
       })
       _this.map.on('load', function() {
         _this.map.addControl(new mapboxgl.NavigationControl(), 'top-left')
-        console.log('geojson')
-        console.log(_this.vectorList)
         if (_this.vectorList && _this.vectorList.length > 0) {
+          console.log(_this.vectorList)
           _this.vectorList.forEach((item, index) => {
-            _this.map.addSource(`customeFeature${index}`, {
+            _this.map.addSource(`customeFeature${item._id}`, {
               type: 'geojson',
               data: item.vectorFeatures
             })
@@ -99,7 +98,7 @@ export default {
       })
       if (_this.vectorList && _this.vectorList.length > 0) {
         _this.vectorList.forEach((item, index) => {
-          _this.map.addSource(`customeFeature${index}`, {
+          _this.map.addSource(`customeFeature${item._id}`, {
             type: 'geojson',
             data: item.vectorFeatures
           })
@@ -163,19 +162,18 @@ export default {
   },
   watch: {
     mapUrl(val) {
-      console.log(val)
       this.changeStyle(val)
     },
     chooseList(val, oldVal) {
       const _this = this
       if (oldVal && oldVal.length > 0) {
         oldVal.forEach((item, index) => {
-          _this.removeVector(index)
+          _this.removeVector(item._id)
         })
       }
       if (val && val.length > 0) {
         val.forEach((item, index) => {
-          _this.addGeoJson(index)
+          _this.addGeoJson(item._id)
         })
       }
     }

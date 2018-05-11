@@ -71,6 +71,7 @@ export default {
     },
     handleSelectionChange(selection) {
       // this.tempVectorList = val
+      console.log(selection)
       this.chooseList = selection
     }
   },

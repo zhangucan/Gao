@@ -224,7 +224,7 @@ export default {
       isFinish: false,
       value: { 'type': '空' },
       active: 0,
-      mapId: 1,
+      mapId: null,
       mapState: 0,
       mapForm: {
         title: '',
@@ -251,13 +251,15 @@ export default {
     async submitMapInfo() {
       this.loading = true
       const map = {
-        _id: this.mapId,
         title: this.mapForm.title,
         lon: this.mapForm.lon,
         lat: this.mapForm.lat,
         desc: this.mapForm.desc,
         rasterLayers: this.rasterList,
         vectorFeatures: this.vectorList
+      }
+      if (this.mapId) {
+        map._id = this.mapId
       }
       await mapApi.saveMap(map)
       const obj = {
