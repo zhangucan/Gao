@@ -66,3 +66,13 @@ export function formatTime(time, option) {
     return d.getMonth() + 1 + '月' + d.getDate() + '日' + d.getHours() + '时' + d.getMinutes() + '分'
   }
 }
+export function dedup(arr) {
+  return Array.from(new Set(arr))
+}
+
+export function diffArr(arr1, arr2) {
+  const a = new Set(arr1)
+  const b = new Set(arr2)
+  const differenceABSet = new Set([...a].filter(x => !b.has(x)))
+  return Array.from(differenceABSet)
+}

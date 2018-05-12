@@ -217,6 +217,8 @@ export default {
         item.vectorFeatures = item[item.featureType]
         this.vectorList.push(item)
       })
+      this.rasterList = utils.dedup(this.rasterList)
+      this.vectorList = utils.dedup(this.vectorList)
     }
   },
   data() {
@@ -324,6 +326,7 @@ export default {
         this.rasterForm.displayTime = ''
         this.rasterForm.address = ''
       }
+      this.rasterList = utils.dedup(this.rasterList)
     },
     addVector() {
       utils.parseJson(this.value).then(data => {
@@ -335,6 +338,7 @@ export default {
         this.vectorList.push(obj)
         this.vectorForm.displayTime = ''
         this.vectorForm.type = ''
+        this.rasterList = utils.dedup(this.rasterList)
       }).catch(error => {
         console.log(error)
         this.$message({

@@ -1,5 +1,11 @@
 <template>
   <div class="app-container">
+    <el-row>
+      <el-col :span="4" :offset="20">
+        <el-button type="primary" @click="saveGridItem">完成修改</el-button>
+        <el-button @click="returnBigScreenHome">返回</el-button>
+      </el-col>
+    </el-row>
     <grid-layout
     :layout='layout'
     :col-num='12'
@@ -37,6 +43,18 @@ export default {
       await this.$store.dispatch('FetchGridItem', { _id: item._id })
       this.loading = false
       await this.$store.dispatch('SetScreenView', obj)
+    },
+    saveGridItem() {
+      console.log(this.$store.state.bigscreen.gridLayout)
+      console.log(this.$store.state.bigscreen.gridItem)
+    },
+    returnBigScreenHome() {
+      const obj = {
+        view: 'BigScreenCard'
+      }
+      this.loading = true
+      this.$store.dispatch('SetScreenView', obj)
+      this.loading = false
     }
   },
   components: {

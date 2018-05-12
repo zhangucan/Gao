@@ -31,3 +31,11 @@ export function fetchVectors(query) {
     params: query
   })
 }
+
+export function saveGridItem(data) {
+  return request({
+    url: '/griditem',
+    method: 'post',
+    data
+  })
+}
