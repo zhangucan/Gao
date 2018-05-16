@@ -31,6 +31,7 @@
 </template>
 <script>
 import VueGridLayout from 'vue-grid-layout'
+import * as bigscreenApi from '../../api/bigscreen'
 var GridLayout = VueGridLayout.GridLayout
 var GridItem = VueGridLayout.GridItem
 export default {
@@ -45,8 +46,7 @@ export default {
       await this.$store.dispatch('SetScreenView', obj)
     },
     saveGridItem() {
-      console.log(this.$store.state.bigscreen.gridLayout)
-      console.log(this.$store.state.bigscreen.gridItem)
+      bigscreenApi.saveGridLayout(this.$store.state.bigscreen.gridLayout)
     },
     returnBigScreenHome() {
       const obj = {

@@ -39,3 +39,11 @@ export function saveGridItem(data) {
     data
   })
 }
+
+export function saveGridLayout(data) {
+  return request({
+    url: '/gridlayout',
+    method: 'post',
+    data
+  })
+}
