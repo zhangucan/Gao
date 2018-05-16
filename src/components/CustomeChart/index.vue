@@ -1,121 +1,113 @@
 <template>
   <el-row>
-    <el-col :span="7">
-      <el-container class="chart-data">
-        <el-header class="panel-left-heading" style="height: 30px">
-          <h4 class="panel-left-title">图表数据</h4>
-        </el-header>
-        <el-main class="panel-body">
-          <hot-table :root="root" :settings="hotSettings"></hot-table>
+    <el-col :span="8">
+      <el-container class="chart-list">
+        <el-aside style="width:90px;">
+          <el-menu @select="changeChartList">
+            <el-menu-item index="bar">
+              <span slot="title">柱状图</span>
+            </el-menu-item>
+            <el-menu-item index="line">
+              <span slot="title">线图</span>
+            </el-menu-item>
+            <el-menu-item index="pie">
+              <span slot="title">饼图</span>
+            </el-menu-item>
+          </el-menu>
+        </el-aside>
+        <el-main>
+          <el-row>
+            <transition-group name="list-complete">
+              <el-col :span="8" v-for="(item, index) in currentChartList.children" :key="index" >
+                <el-card :body-style="{ padding: '0px' }" style="cursor:pointer;margin:10px;" :class= "{ chartOn: item.type == currentChart }">
+                  <img :src="formatImg(item)" class="image" @click="chooseChart(item)">
+                  <div class="chart-name">
+                    <span >{{ item.name }}</span>
+                  </div>
+                </el-card>
+              </el-col>
+            </transition-group>
+          </el-row>
         </el-main>
-        <el-footer class="panel-left-footer"></el-footer>
       </el-container>
     </el-col>
-    <el-col :span="12">
-      <el-container class="chart-container">
-        <el-main></el-main>
-        <el-footer class="panel-mid-footer"></el-footer>
-      </el-container>
-    </el-col>
-    <el-col :span="5">
-      <el-container class="chart-option">
-        <el-row></el-row>
-        <el-row></el-row>
-        <el-row></el-row>
+    <el-col :span="16">
+      <el-container class="chart-detail">
       </el-container>
     </el-col>
   </el-row>
 </template>
 <script>
-import HotTable from '@handsontable/vue'
-const data = [
-  {
-    x: '类别名称',
-    legend: '地区',
-    count: '订单数量'
-  }
-]
 export default {
   data() {
     return {
-      root: 'table',
-      hotSettings: {
-        data: data,
-        columns: [
-          {
-            data: 'x',
-            type: 'text'
-          },
-          {
-            data: 'legend',
-            type: 'text'
-          },
-          {
-            data: 'count',
-            type: 'text'
-          }
-        ],
-        colHeaders: [
-          'x轴',
-          '图例',
-          '数据值'
-        ],
-        stretchH: 'all',
-        autoWrapRow: true,
-        rowHeaders: true,
-        mergeCells: true,
-        contextMenu: true,
-        manualRowResize: true,
-        manualColumnResize: true
+      chartList: this.$store.state.bigscreen.chartList,
+      currentChartList: [],
+      currentChart: '',
+      chartOn: {
+        'box-shadow': '0 2px 12px 0 rgba(103,194,58,1)'
+      },
+      chartOff: {
+        'box-shadow': '0 2px 12px 0 rgba(0,0,0,.1)'
       }
     }
   },
-  components: {
-    HotTable
+  methods: {
+    changeChartList(type) {
+      this.currentChartList = this.chartList.find(item => {
+        return item.type === type
+      })
+    },
+    formatImg(item) {
+      return `../../../static/charts/${item.img}.png`
+    },
+    chooseChart(item) {
+      console.log(item.type)
+      this.currentChart = item.type
+    },
+    chartActive(item) {
+      return item.type === this.currentChart ? this.chartOn : this.chartOff
+    }
   }
 }
 </script>
-<style>
-@import url('../../styles/handsontable.css');
-</style>
 <style lang="scss" scoped>
-.chart-data{
-  background-color: #edf2f6;
+.chart-list{
   height: 85vh;
+  background-color: #edf2f6;
+  
 }
-.content {
-  padding: 10px;
+.chart-detail{
+  height: 85vh;
+  background-color: #CAD3DB;
 }
-.panel-left-title {
-  font-size: 12px;
+.el-menu{
+  height: 85vh;
+  width: 90px;
+  background-color: rgba($color: #000000, $alpha: 0);
+}
+.margin10{
   margin: 10px;
 }
-.panel-left-heading {
-  height: 29px;
-  background-color: #dae4ec;
+.list-complete-item {
+  transition: all 1s;
+  display: inline-block;
+  margin-right: 10px;
 }
-.panel-left-footer {
-  background: #dae4ec;
-  height: 50px;
+.list-complete-enter, .list-complete-leave-to
+/* .list-complete-leave-active for below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
 }
-.panel-mid-footer{
-  background: #ffffff;
-  height: 50px;
+.list-complete-leave-active {
+  position: absolute;
 }
-.panel-body {
-  background-color: #f1f5f8;
+.chart-name {
+  padding: 5px;
+  font-size: 14px;
+  text-align: center;
 }
-.chart-container {
-  background-color: #CAD3DB;
-  height: 85vh;
-  padding: 0;
-}
-.chart-option {
-  font-size: 12px;
-  color: #b4c0d6;
-  background-color: #44546e;
-  min-height: calc(100% - 30px);
+.chartOn {
+   box-shadow: 0 2px 12px 0 rgba(103,194,58,.1);
 }
 </style>
-
-

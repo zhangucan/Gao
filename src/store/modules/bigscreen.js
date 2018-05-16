@@ -1,5 +1,85 @@
 import * as bigscreenApi from '../../api/bigscreen'
 import * as mapApi from '../../api/map'
+const chartList = [
+  {
+    name: '柱状图',
+    type: 'bar',
+    children: [
+      {
+        name: '堆积条形图',
+        type: 'duijitiaoxing',
+        img: 0
+      },
+      {
+        name: '堆积柱图',
+        type: 'duijizhuzhuang',
+        img: 2
+      },
+      {
+        name: '双向柱图',
+        type: 'shuangxiang',
+        img: 1
+      },
+      {
+        name: '系列柱线图',
+        type: 'xiliezhuxian',
+        img: 25
+      },
+      {
+        name: '堆积柱线图',
+        type: 'duijizhuxian',
+        img: 999
+      }
+    ]
+  },
+  {
+    name: '折线图',
+    type: 'line',
+    children: [
+      {
+        name: '堆积面积图',
+        type: 'duijimianji',
+        img: 10
+      },
+      {
+        name: '堆积折线图',
+        type: 'duijizhexian',
+        img: 11
+      },
+      {
+        name: '传统面积图',
+        type: 'chuantongmianji',
+        img: 15
+      },
+      {
+        name: '阶梯折线图',
+        type: 'jietizhexian',
+        img: 17
+      }
+    ]
+  },
+  {
+    name: '饼图',
+    type: 'pie',
+    children: [
+      {
+        name: '南丁格尔图',
+        type: 'duijimianji',
+        img: 7
+      },
+      {
+        name: '环形图',
+        type: 'duijizhexian',
+        img: 41
+      },
+      {
+        name: '传统饼图',
+        type: 'chuantongmianji',
+        img: 42
+      }
+    ]
+  }
+]
 const bigscreen = {
   state: {
     currentView: 'BigScreenCard',
@@ -8,6 +88,7 @@ const bigscreen = {
     gridLayout: {},
     layoutList: [],
     gridMapList: [],
+    chartList: chartList,
     currentMap: null
   },
   mutations: {
