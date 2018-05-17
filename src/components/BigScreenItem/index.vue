@@ -47,7 +47,9 @@ export default {
       let gridType = ''
       this.view === 'CustomeMap' ? gridType = 'map' : gridType = 'chart'
       this.$store.state.bigscreen.gridItem.gridType = gridType
-      bigscreenApi.saveGridItem(this.$store.state.bigscreen.gridItem).then()
+      bigscreenApi.saveGridItem(this.$store.state.bigscreen.gridItem).then((err, data) => {
+        if (err) throw err
+      })
     }
   },
   data() {

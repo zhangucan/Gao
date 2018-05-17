@@ -24,11 +24,6 @@ const chartList = [
         name: '系列柱线图',
         type: 'xiliezhuxian',
         img: 25
-      },
-      {
-        name: '堆积柱线图',
-        type: 'duijizhuxian',
-        img: 999
       }
     ]
   },
@@ -86,8 +81,10 @@ const bigscreen = {
     gridItem: {},
     currentLayout: '',
     gridLayout: {},
+    gridItems: [],
     layoutList: [],
     gridMapList: [],
+    chartType: '',
     chartList: chartList,
     currentMap: null
   },
@@ -96,12 +93,19 @@ const bigscreen = {
       state.currentView = obj.view
     },
     FETCH_LAYOUT: (state, data) => {
-      state.gridLayout = data
+      state.gridLayout = data.gridLayout
+      state.gridItems = data.gridItems
     },
     FETCH_ALL_LAYOUT: (state, data) => {
-      state.layoutList = data.gridItems
+      state.layoutList = data.gridLayoutList
     },
     FETCH_GRID_ITEM: (state, data) => {
+      if (data.gridItem.gridType === 'map') {
+        if (!data.gridItem.component.vectorList) data.gridItem.component.vectorList = []
+        if (!data.gridItem.component.rasterList) data.gridItem.component.rasterList = []
+      } else {
+        if (!data.gridItem.component.name) data.gridItem.component.name = ''
+      }
       state.gridItem = data.gridItem
     },
     GRID_FETCH_MAP: (state, data) => {
@@ -116,6 +120,9 @@ const bigscreen = {
     },
     FETCH_VECTORS: (state, data) => {
       state.gridVectors = data.vectors
+    },
+    EDIT_CHART: (state, data) => {
+      state.chartType = data
     }
   },
   actions: {
@@ -178,13 +185,15 @@ const bigscreen = {
     FetchLayout({ commit, state }, obj) {
       return new Promise((resolve, reject) => {
         bigscreenApi.fetchLayout(obj).then(response => {
-          const data = response.gridItems
-          commit('FETCH_LAYOUT', data)
+          commit('FETCH_LAYOUT', response)
           resolve()
         }).catch(error => {
           reject(error)
         })
       })
+    },
+    EditChart({ commit, state }, obj) {
+      commit('EDIT_CHART', obj)
     }
   }
 }

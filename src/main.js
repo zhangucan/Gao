@@ -16,14 +16,16 @@ import '@/icons' // icon
 import '@/permission' // permission control
 import contentmenu from 'v-contextmenu'
 import 'v-contextmenu/dist/index.css'
-
+const Bus = new Vue()
 Vue.use(contentmenu)
 Vue.use(ElementUI, { locale })
-
 Vue.config.productionTip = false
 
 new Vue({
   el: '#app',
+  data: {
+    Bus
+  },
   router,
   store,
   template: '<App/>',

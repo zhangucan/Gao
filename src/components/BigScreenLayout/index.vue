@@ -46,7 +46,13 @@ export default {
       await this.$store.dispatch('SetScreenView', obj)
     },
     saveGridItem() {
-      bigscreenApi.saveGridLayout(this.$store.state.bigscreen.gridLayout)
+      const obj = {
+        gridLayout: this.$store.state.bigscreen.gridLayout,
+        gridItems: this.$store.state.bigscreen.gridItems
+      }
+      bigscreenApi.saveGridLayout(obj).then(err => {
+        if (err) throw err
+      })
     },
     returnBigScreenHome() {
       const obj = {
@@ -63,11 +69,10 @@ export default {
   },
   computed: {
     layout() {
-      return [...this.$store.state.bigscreen.gridLayout]
+      return [...this.$store.state.bigscreen.gridItems]
     }
   },
   beforeCreate() {
-    this.$store.dispatch('FetchLayout')
   }
 }
 </script>

@@ -6,7 +6,6 @@
   </div>
 </template>
 <script>
-import * as bigscreen from '../../api/bigscreen'
 import BigScreenCard from '../../components/BigScreenCard'
 import BigScreenLayout from '../../components/BigScreenLayout'
 import BigScreenItem from '../../components/BigScreenItem'
@@ -27,9 +26,6 @@ export default {
     }
   },
   methods: {
-    test() {
-      bigscreen.fetchLayout({ title: '白龟山湿地公园' })
-    }
   }
 }
 </script>
