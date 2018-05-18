@@ -18,23 +18,48 @@ export class Chart {
   }
   getData() {
     const option = this.chart.getOption()
-    let arr1 = []
-    const arr2 = option.series
+    const data = option.series.map(item => {
+      return item.data
+    })
+    let category = []
     if (option.xAxis[0].type === 'category') {
-      arr1 = option.xAxis[0].data
+      category = option.xAxis[0].data
     } else {
-      arr1 = option.yAxis[0].data
+      category = option.yAxis[0].data
     }
-    return arr1.map((item, index) => {
-      return arr2.map((item2, index2) => {
-        return {
-          category: item,
-          series: {
-            legend: item2.name,
-            value: item2.data[index]
-          }
-        }
+    const legend = option.legend[0].data
+    data.unshift(category)
+    const tempArr = data[0].map((col, i) => {
+      return data.map((row) => {
+        return row[i]
       })
     })
+    legend.unshift('')
+    tempArr.unshift(legend)
+    return tempArr
+  }
+  setData(data) {
+    const option = this.chart.getOption()
+    const category = data.shift()
+    category.shift()
+    option.legend[0].data = category
+    const tempArr = data[0].map((col, i) => {
+      return data.map((row) => {
+        return row[i]
+      })
+    })
+
+    if (option.xAxis[0].type === 'category') {
+      option.xAxis[0].data = tempArr.shift()
+    } else {
+      option.yAxis[0].data = tempArr.shift()
+    }
+    tempArr.forEach((item, index) => {
+      option.series[index].data = item.map(item2 => {
+        return Number(item2)
+      })
+      option.series[index].name = category[index]
+    })
+    this.chart.setOption(option)
   }
 }

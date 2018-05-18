@@ -6,7 +6,7 @@
           <h4 class="panel-left-title">图表数据</h4>
         </el-header>
         <el-main class="panel-body" style="padding:0px;">
-          <hot-table :root="root" :settings="hotSettings"></hot-table>
+          <hot-table ref="hotTable" :root="root" :data="chartData" :settings="hotSettings"></hot-table>
         </el-main>
         <el-footer class="panel-left-footer"></el-footer>
       </el-container>
@@ -29,30 +29,59 @@
   </el-row>
 </template>
 <script>
+import Bus from '../../utils/bus'
 import HotTable from '@handsontable/vue'
 import { Chart } from '../charts/Chart'
-const data = [
-  {
-    x: '类别名称',
-    legend: '地区',
-    count: '订单数量'
-  }
-]
 export default {
   data() {
     return {
       root: 'table',
       hotSettings: {
-        data: data,
-        colHeaders: [
-          'x轴',
-          '图例',
-          '数据值'
-        ]
+        rowHeaders: true,
+        stretchH: 'all',
+        className: 'htCenter',
+        fillHandle: true,
+        manualColumnFreeze: true,
+        contextMenu: {
+          items: {
+            'row_above': {
+              name: '单元格上方插入行'
+            },
+            'row_below': {
+              name: '单元格下方插入行'
+            },
+            'hsep1': '---------',
+            'col_left': {
+              name: '单元格左侧插入列'
+            },
+            'col_right': {
+              name: '单元格右侧插入列'
+            },
+            'hsep2': '---------',
+            'remove_row': {
+              name: '删除行'
+            },
+            'remove_col': {
+              name: '删除列'
+            }
+          }
+        },
+        afterChange(changes, source) {
+          if (source !== 'loadData') {
+            const data = this.getData()
+            Bus.$emit('tableChange', data)
+          }
+        }
       },
+      tableData: [],
+      chartData: [],
       chart: null,
       chartType: this.$store.state.bigscreen.chartType
     }
+  },
+  methods: {
+  },
+  watch: {
   },
   components: {
     HotTable
@@ -60,13 +89,18 @@ export default {
   mounted() {
     this.chart = new Chart(this.$refs.customeChart)
     this.chart.setChartOption()(this.chartType)
-    const data = this.chart.getData()
-    console.log(data)
+    this.chartData = this.chart.getData()
+    const _this = this
+    Bus.$on('tableChange', (content) => {
+      if (content) {
+        _this.chart.setData(content)
+      }
+    })
   }
 }
 </script>
 <style>
-@import url('../../styles/handsontable.css');
+@import url('../../../node_modules/handsontable/dist/handsontable.full.min.css');
 </style>
 <style lang="scss" scoped>
 .chart-data{
