@@ -36,8 +36,8 @@
         <el-main>
           <div ref="customeChart" class="chart"></div>
         </el-main>
-         <el-footer style="height:50px;background-color: #fff; text-align: center;">
-           <el-row class="margin-top10">
+         <el-footer style="height:50px;background-color: #edf2f6;; text-align: center;">
+           <el-row class="margin-top5">
             <el-button type="primary" @click="editChart">图表编辑</el-button>
           </el-row>
          </el-footer>
@@ -84,16 +84,16 @@ export default {
 </script>
 <style lang="scss" scoped>
 .chart-list{
-  height: 85vh;
+  height: 80vh;
   background-color: #edf2f6;
   
 }
 .chart-detail{
-  height: 85vh;
+  height: 80vh;
   background-color: #CAD3DB;
 }
 .el-menu{
-  height: 85vh;
+  height: 80vh;
   width: 90px;
   background-color: rgba($color: #000000, $alpha: 0);
 }
@@ -129,5 +129,8 @@ export default {
 }
 .margin-top10{
   margin-top: 10px;
+}
+.margin-top5{
+  margin-top: 5px;
 }
 </style>

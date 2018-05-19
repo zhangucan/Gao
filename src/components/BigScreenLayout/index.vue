@@ -76,7 +76,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .grid{
   background: #adbed4;
   border-radius: 4px 

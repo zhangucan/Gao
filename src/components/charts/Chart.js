@@ -38,6 +38,33 @@ export class Chart {
     tempArr.unshift(legend)
     return tempArr
   }
+  setTitle(title) {
+    const option = this.chart.getOption()
+    option.title = title
+    this.chart.setOption(option)
+  }
+  setXAxis(xAxis) {
+    console.log(xAxis)
+    const option = this.chart.getOption()
+    option.xAxis[0]['name'] = xAxis.name
+    option.xAxis[0]['nameRotate'] = xAxis.nameRotate
+    option.xAxis[0]['nameLocation'] = xAxis.nameLocation
+    option.xAxis[0]['axisLabel'] = xAxis.axisLabel
+    this.chart.setOption(option)
+  }
+  setYAxis(yAxis) {
+    const option = this.chart.getOption()
+    option.yAxis[0]['name'] = yAxis.name
+    option.yAxis[0]['nameRotate'] = yAxis.nameRotate
+    option.yAxis[0]['nameLocation'] = yAxis.nameLocation
+    option.yAxis[0]['axisLabel'] = yAxis.axisLabel
+    this.chart.setOption(option)
+  }
+  setGrid(grid) {
+    const option = this.chart.getOption()
+    option.grid = grid
+    this.chart.setOption(option)
+  }
   setData(data) {
     const option = this.chart.getOption()
     const category = data.shift()
@@ -55,6 +82,9 @@ export class Chart {
       option.yAxis[0].data = tempArr.shift()
     }
     tempArr.forEach((item, index) => {
+      if (!option.series[index]) {
+        option.series[index] = option.series[0]
+      }
       option.series[index].data = item.map(item2 => {
         return Number(item2)
       })
