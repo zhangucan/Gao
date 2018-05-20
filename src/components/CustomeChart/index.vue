@@ -17,7 +17,11 @@ export default {
     }
   },
   mounted() {
-    this.$store.state.bigscreen.gridItem.component.name === '' ? this.view = 'ChooseChart' : this.view = 'EditChart'
+    if (this.$store.state.bigscreen.gridItem.type === 'map') {
+      this.view = 'ChooseChart'
+    } else {
+      this.$store.state.bigscreen.gridItem.component.chartType === '' ? this.view = 'ChooseChart' : this.view = 'EditChart'
+    }
     this.$root.Bus.$on('changeChartView', content => {
       this.view = content
     })

@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     changeChartList(type) {
-      this.chartType.type = type
+      this.$store.state.bigscreen.gridItem.component.chartType.type = type
       this.currentChartList = this.chartList.find(item => {
         return item.type === type
       })
@@ -71,12 +71,12 @@ export default {
     },
     chooseChart(item) {
       if (this.chart) this.chart.clear()
-      this.chartType.name = item.type
+      this.$store.state.bigscreen.gridItem.component.chartType.name = item.type
       this.chart = new Chart(this.$refs.customeChart)
-      this.chart.setChartOption()(this.chartType)
+      this.chart.setChartOption()(this.$store.state.bigscreen.gridItem.component.chartType)
     },
     editChart() {
-      this.$store.dispatch('EditChart', this.chartType)
+      this.$store.dispatch('EditChart', this.$store.state.bigscreen.gridItem.component.chartType)
       this.$root.Bus.$emit('changeChartView', 'EditChart')
     }
   }

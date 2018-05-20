@@ -23,7 +23,7 @@
         <el-footer style="height:50px;background-color: #edf2f6;; text-align: center;">
            <el-row class="margin-top5">
             <el-button @click="chooseChart">重选图表</el-button>
-            <el-button  type="primary">确定</el-button>
+            <el-button  type="primary" @click="saveChart">确定</el-button>
           </el-row>
         </el-footer>
       </el-container>
@@ -204,11 +204,21 @@ export default {
   methods: {
     init() {
       this.chart = new Chart(this.$refs.customeChart)
-      this.chart.setChartOption()(this.chartType)
+      this.chart.setChartOption()(this.$store.state.bigscreen.gridItem.component.chartType)
+      if (this.$store.state.bigscreen.gridItem.component.option) {
+        this.chart.setOption(this.$store.state.bigscreen.gridItem.component.option)
+      }
       this.chartData = this.chart.getData()
     },
     chooseChart() {
       this.$root.Bus.$emit('changeChartView', 'ChooseChart')
+    },
+    saveChart() {
+      const obj = {
+        chartType: this.chartType,
+        option: this.chart.getOption()
+      }
+      this.$store.state.bigscreen.gridItem.component = obj
     }
   },
   watch: {
@@ -240,7 +250,11 @@ export default {
   components: {
     HotTable
   },
+  created() {
+    console.log('created')
+  },
   mounted() {
+    console.log('mounted')
     this.init()
     const _this = this
     Bus.$on('tableChange', (content) => {
@@ -249,7 +263,7 @@ export default {
       }
     })
   },
-  beforeDestroyed() {
+  destroyed() {
     Bus.$off('tableChange')
   }
 }
@@ -328,5 +342,6 @@ export default {
   color: #b4c0d6;
 }
 </style>
+
 
 

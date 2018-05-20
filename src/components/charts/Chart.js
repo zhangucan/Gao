@@ -16,6 +16,12 @@ export class Chart {
   clear() {
     this.chart.clear()
   }
+  getOption() {
+    return this.chart.getOption()
+  }
+  setOption(option) {
+    this.chart.setOption(option)
+  }
   getData() {
     const option = this.chart.getOption()
     const data = option.series.map(item => {
@@ -44,7 +50,6 @@ export class Chart {
     this.chart.setOption(option)
   }
   setXAxis(xAxis) {
-    console.log(xAxis)
     const option = this.chart.getOption()
     option.xAxis[0]['name'] = xAxis.name
     option.xAxis[0]['nameRotate'] = xAxis.nameRotate

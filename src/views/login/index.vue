@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <el-form class="login-form login-content" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
-      <h3 class="title">国家湿地公园高分动态监测</h3>
+      <h1 class="title">国家湿地公园高分动态监测平台</h1>
       <el-form-item prop="username">
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
@@ -16,14 +16,13 @@
           placeholder="password"></el-input>
           <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eye" /></span>
       </el-form-item>
-      <el-form-item>
+      <el-form-item class="el-form-btn">
         <el-button type="primary" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin">
-          Sign in
+          登录
         </el-button>
       </el-form-item>
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: admin</span>
+      <div class="tips" style="text-align:center">
+        <span style="margin-right:20px;">版权所有@河南省高分中心平顶山分中心</span>
       </div>
     </el-form>
     <mapbox-map mapWidth="100%" mapHeight="100%"></mapbox-map>
@@ -120,6 +119,12 @@ $light_gray:#eee;
   }
   .el-form-item {
     border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 5px;
+    color: #454545;
+  }
+  .el-form-btn {
+    border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     color: #454545;
@@ -148,7 +153,7 @@ $light_gray:#eee;
   .tips {
     font-size: 14px;
     color: #fff;
-    margin-bottom: 10px;
+    margin-bottom: 10vh;
     span {
       &:first-of-type {
         margin-right: 16px;
