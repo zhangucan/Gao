@@ -214,11 +214,7 @@ export default {
       this.$root.Bus.$emit('changeChartView', 'ChooseChart')
     },
     saveChart() {
-      const obj = {
-        chartType: this.chartType,
-        option: this.chart.getOption()
-      }
-      this.$store.state.bigscreen.gridItem.component = obj
+      this.$store.state.bigscreen.gridItem.component.option = this.chart.getOption()
     }
   },
   watch: {
