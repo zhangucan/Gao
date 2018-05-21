@@ -86,7 +86,8 @@ const bigscreen = {
     gridMapList: [],
     chartType: '',
     chartList: chartList,
-    currentMap: null
+    currentMap: null,
+    currentComponent: null
   },
   mutations: {
     SET_SCREEN_VIEW: (state, obj) => {
@@ -122,7 +123,16 @@ const bigscreen = {
       state.gridVectors = data.vectors
     },
     EDIT_CHART: (state, data) => {
-      state.chartType = data
+      state.gridItem.component.chartType = data
+    },
+    CLEAR_COMPONENT: (state) => {
+      state.gridItem.component = {}
+    },
+    SET_CURRENT_COMPONENT: (state, data) => {
+      state.currentComponent = data
+    },
+    SAVE_GRID_ITEM: (state, data) => {
+      state.gridItem = data
     }
   },
   actions: {
@@ -156,6 +166,12 @@ const bigscreen = {
         })
       })
     },
+    ClearCurrentComponent({ commit }) {
+      commit('CLEAR_CURRENT_COMPONENT')
+    },
+    SetCurrentComponent({ commit }, obj) {
+      commit('SET_CURRENT_COMPONENT', obj)
+    },
     FetchGridItem({ commit }, obj) {
       return new Promise((resolve, reject) => {
         bigscreenApi.fetchGridItem(obj).then(response => {
@@ -168,9 +184,7 @@ const bigscreen = {
     },
     // 大屏管理当前展示视图
     SetScreenView({ commit }, obj) {
-      return new Promise((resolve, reject) => {
-        commit('SET_SCREEN_VIEW', obj)
-      })
+      commit('SET_SCREEN_VIEW', obj)
     },
     FetchAllLayout({ commit, state }, obj) {
       return new Promise((resolve, reject) => {
@@ -194,6 +208,12 @@ const bigscreen = {
     },
     EditChart({ commit, state }, obj) {
       commit('EDIT_CHART', obj)
+    },
+    ClearComponent({ commit, state }) {
+      commit('CLEAR_COMPONENT')
+    },
+    SaveGridItem({ commit, state }, obj) {
+      commit('SAVE_GRID_ITEM', obj)
     }
   }
 }

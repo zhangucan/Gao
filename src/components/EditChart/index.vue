@@ -10,7 +10,7 @@
         </el-main>
         <el-footer style="height:50px;background-color: #edf2f6; text-align: center;">
            <el-row class="margin-top5">
-            <el-button @click="init">恢复样例数据</el-button>
+            <el-button @click="restoreData">恢复样例数据</el-button>
           </el-row>
         </el-footer>
       </el-container>
@@ -135,10 +135,10 @@ export default {
         subtext: ''
       },
       grid: {
-        left: '',
-        right: '',
-        top: '',
-        bottom: '',
+        left: '20',
+        right: '20',
+        top: '50',
+        bottom: '50',
         containLabel: true
       },
       xAxis: {
@@ -198,23 +198,39 @@ export default {
       tableData: [],
       chartData: [],
       chart: null,
-      chartType: this.$store.state.bigscreen.chartType
+      gridItem: this.$store.state.bigscreen.gridItem,
+      currentComponent: this.$store.state.bigscreen.currentComponent
     }
   },
   methods: {
+    restoreData() {
+      if (this.currentComponent.chartType && this.currentComponent.option) {
+        this.chart.setOption(this.currentComponent.option)
+      } else {
+        this.chart.setChartOption()(this.gridItem.component.chartType)
+      }
+      this.chartData = this.chart.getData()
+    },
     init() {
       this.chart = new Chart(this.$refs.customeChart)
-      this.chart.setChartOption()(this.$store.state.bigscreen.gridItem.component.chartType)
-      if (this.$store.state.bigscreen.gridItem.component.option) {
-        this.chart.setOption(this.$store.state.bigscreen.gridItem.component.option)
+      if (this.gridItem.component.chartType && this.gridItem.component.option) {
+        this.chart.setOption(this.gridItem.component.option)
+      } else {
+        this.chart.setChartOption()(this.gridItem.component.chartType)
       }
       this.chartData = this.chart.getData()
     },
     chooseChart() {
+      this.$store.dispatch('ClearComponent')
       this.$root.Bus.$emit('changeChartView', 'ChooseChart')
     },
     saveChart() {
-      this.$store.state.bigscreen.gridItem.component.option = this.chart.getOption()
+      const obj = {
+        chartType: this.gridItem.component.chartType,
+        option: this.chart.getOption()
+      }
+      this.gridItem.component = obj
+      this.$store.dispatch('SaveGridItem', this.gridItem)
     }
   },
   watch: {

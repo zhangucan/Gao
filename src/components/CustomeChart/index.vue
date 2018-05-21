@@ -13,14 +13,19 @@ export default {
   },
   data() {
     return {
-      view: ''
+      view: '',
+      gridItem: this.$store.state.bigscreen.gridItem
     }
   },
   mounted() {
-    if (this.$store.state.bigscreen.gridItem.type === 'map') {
+    if (this.gridItem.type === 'map') {
       this.view = 'ChooseChart'
     } else {
-      this.$store.state.bigscreen.gridItem.component.chartType === '' ? this.view = 'ChooseChart' : this.view = 'EditChart'
+      if (this.gridItem.component.chartType) {
+        this.view = 'EditChart'
+      } else {
+        this.view = 'ChooseChart'
+      }
     }
     this.$root.Bus.$on('changeChartView', content => {
       this.view = content

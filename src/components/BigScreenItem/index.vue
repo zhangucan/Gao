@@ -44,17 +44,22 @@ export default {
       this.loading = false
     },
     saveGridItem() {
+      const _this = this
       let gridType = ''
       this.view === 'CustomeMap' ? gridType = 'map' : gridType = 'chart'
-      this.$store.state.bigscreen.gridItem.gridType = gridType
-      bigscreenApi.saveGridItem(this.$store.state.bigscreen.gridItem).then((err, data) => {
+      this.gridItem.gridType = gridType
+      bigscreenApi.saveGridItem(this.gridItem).then((err, data) => {
         if (err) throw err
+        _this.$store.dispatch('SetCurrentComponent', this.gridItem.component)
+      }).catch(err => {
+        console.log(err)
       })
     }
   },
   data() {
     return {
-      view: ''
+      view: '',
+      gridItem: this.$store.state.bigscreen.gridItem
     }
   },
   mounted() {

@@ -42,6 +42,7 @@ export default {
         view: 'BigScreenItem'
       }
       await this.$store.dispatch('FetchGridItem', { _id: item._id })
+      await this.$store.dispatch('SetCurrentComponent', this.$store.state.bigscreen.gridItem.component)
       this.loading = false
       await this.$store.dispatch('SetScreenView', obj)
     },
@@ -52,6 +53,8 @@ export default {
       }
       bigscreenApi.saveGridLayout(obj).then(err => {
         if (err) throw err
+      }).catch(err => {
+        console.log(err)
       })
     },
     returnBigScreenHome() {
