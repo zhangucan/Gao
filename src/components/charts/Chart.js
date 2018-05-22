@@ -50,20 +50,45 @@ export class Chart {
     this.chart.setOption(option)
   }
   setXAxis(xAxis) {
+    let temp = JSON.parse(JSON.stringify(xAxis))
     const option = this.chart.getOption()
-    option.xAxis[0]['name'] = xAxis.name
-    option.xAxis[0]['nameRotate'] = xAxis.nameRotate
-    option.xAxis[0]['nameLocation'] = xAxis.nameLocation
-    option.xAxis[0]['axisLabel'] = xAxis.axisLabel
+    temp = this.lineOrBarFormat(option, temp)
+    option.xAxis[0]['name'] = temp.name
+    option.xAxis[0]['nameRotate'] = temp.nameRotate
+    option.xAxis[0]['nameLocation'] = temp.nameLocation
+    option.xAxis[0]['axisLabel'] = temp.axisLabel
     this.chart.setOption(option)
   }
   setYAxis(yAxis) {
+    let temp = JSON.parse(JSON.stringify(yAxis))
     const option = this.chart.getOption()
-    option.yAxis[0]['name'] = yAxis.name
-    option.yAxis[0]['nameRotate'] = yAxis.nameRotate
-    option.yAxis[0]['nameLocation'] = yAxis.nameLocation
-    option.yAxis[0]['axisLabel'] = yAxis.axisLabel
+    temp = this.lineOrBarFormat(option, temp)
+    option.yAxis[0]['name'] = temp.name
+    option.yAxis[0]['nameRotate'] = temp.nameRotate
+    option.yAxis[0]['nameLocation'] = temp.nameLocation
+    option.yAxis[0]['axisLabel'] = temp.axisLabel
     this.chart.setOption(option)
+  }
+  lineOrBarFormat(option, temp) {
+    option.yAxis[0]['nameLocation'] = temp.nameLocation
+    if (option.yAxis[0].type === 'category') {
+      temp.axisLabel.formatter = {}
+    }
+    switch (temp.nameLocation) {
+      case '开始':
+        temp.nameLocation = 'start'
+        break
+      case '中间':
+        temp.nameLocation = 'center'
+        break
+      case '结尾':
+        temp.nameLocation = 'end'
+        break
+      default:
+        temp.nameLocation = 'center'
+        break
+    }
+    return temp
   }
   setGrid(grid) {
     const option = this.chart.getOption()

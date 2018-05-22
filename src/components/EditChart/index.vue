@@ -30,7 +30,7 @@
     </el-col>
     <el-col :span="5">
       <el-container class="chart-option">
-        <el-main style="padding:0">
+        <el-main style="padding:0;" v-if="showOption">
           <el-row>
             <div class="option-header">图表基本信息</div>
             <div class="option-container">
@@ -77,8 +77,8 @@
                     <el-radio-button label="结尾"></el-radio-button>
                   </el-radio-group>
                 </el-form-item>
-                <el-form-item label="轴单位">
-                  <el-select v-model="xAxis.axisLabel.formatter" placeholder="默认" size="mini">
+                <el-form-item label="轴单位" v-show="option.xAxis[0].type === 'value'">
+                  <el-select  v-model="xAxis.axisLabel.formatter" placeholder="默认" size="mini">
                     <el-option label="默认" value="{value}"></el-option>
                     <el-option label="%" value="{value} %"></el-option>
                     <el-option label="㎡" value="{value} ㎡"></el-option>
@@ -98,13 +98,13 @@
                   <el-input size="mini" v-model="yAxis.name" placeholder="请输入轴名称" style="width: 50%;"></el-input>
                 </el-form-item>
                 <el-form-item label="名称位置">
-                  <el-radio-group v-model="yAxis.nameLocation"  size="mini">
+                  <el-radio-group v-model="yAxis.nameLocation" size="mini">
                     <el-radio-button label="开始"></el-radio-button>
                     <el-radio-button label="中间"></el-radio-button>
                     <el-radio-button label="结尾"></el-radio-button>
                   </el-radio-group>
                 </el-form-item>
-                <el-form-item label="轴单位">
+                <el-form-item label="轴单位" v-show="option.yAxis[0].type === 'value'">
                   <el-select v-model="yAxis.axisLabel.formatter" placeholder="默认" size="mini">
                     <el-option label="默认" value="{value}"></el-option>
                     <el-option label="%" value="{value} %"></el-option>
@@ -129,6 +129,7 @@ import { Chart } from '../charts/Chart'
 export default {
   data() {
     return {
+      showOption: false,
       root: 'table',
       title: {
         text: '',
@@ -144,17 +145,17 @@ export default {
       xAxis: {
         name: '',
         nameRotate: '',
-        nameLocation: '',
+        nameLocation: 'center',
         axisLabel: {
-          formatter: ''
+          formatter: '{value}'
         }
       },
       yAxis: {
         name: '',
         nameRotate: '',
-        nameLocation: '',
+        nameLocation: 'center',
         axisLabel: {
-          formatter: ''
+          formatter: '{value}'
         }
       },
       hotSettings: {
@@ -197,6 +198,7 @@ export default {
       },
       tableData: [],
       chartData: [],
+      option: {},
       chart: null,
       gridItem: this.$store.state.bigscreen.gridItem,
       currentComponent: this.$store.state.bigscreen.currentComponent
@@ -219,6 +221,13 @@ export default {
         this.chart.setChartOption()(this.gridItem.component.chartType)
       }
       this.chartData = this.chart.getData()
+      this.option = this.chart.getOption()
+      this.title = this.option.title[0]
+      this.grid = this.option.grid[0]
+      this.xAxis = this.option.xAxis[0]
+      this.yAxis = this.option.yAxis[0]
+      this.showOption = true
+      console.log(this.option)
     },
     chooseChart() {
       this.$store.dispatch('ClearComponent')
@@ -262,11 +271,7 @@ export default {
   components: {
     HotTable
   },
-  created() {
-    console.log('created')
-  },
   mounted() {
-    console.log('mounted')
     this.init()
     const _this = this
     Bus.$on('tableChange', (content) => {
@@ -350,7 +355,7 @@ export default {
 }
 .el-form-item{
   padding-left: 20px;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   color: #b4c0d6;
 }
 </style>

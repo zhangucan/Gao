@@ -14,7 +14,7 @@
     </el-col>
     <el-col :span="5" class="margin15" style="text-align: center; cursor:pointer">
       <el-card :body-style="{ padding: '0px' }">
-        <i class="el-icon-plus add-srceen" @click="addMap()"></i>
+        <i class="el-icon-plus add-srceen" @click="addScreen()"></i>
       </el-card>
     </el-col>
   </el-row>
@@ -35,8 +35,18 @@ export default {
       await this.$store.dispatch('FetchLayout', { _id: id })
       this.loading = false
       await this.$store.dispatch('SetScreenView', obj)
+    },
+    async addScreen() {
+      this.loading = true
+      const obj = {
+        view: 'BigScreenLayout'
+      }
+      await this.$store.dispatch('CreateLayout')
+      this.loading = false
+      await this.$store.dispatch('SetScreenView', obj)
     }
   },
+
   beforeCreate() {
     this.loading = true
     this.$store.dispatch('FetchAllLayout').then(() => {

@@ -196,6 +196,16 @@ const bigscreen = {
         })
       })
     },
+    CreateLayout({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        bigscreenApi.createLayout().then(response => {
+          commit('FETCH_LAYOUT', response)
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
     FetchLayout({ commit, state }, obj) {
       return new Promise((resolve, reject) => {
         bigscreenApi.fetchLayout(obj).then(response => {

@@ -7,7 +7,12 @@ export function fetchLayout(query) {
     params: query
   })
 }
-
+export function createLayout() {
+  return request({
+    url: '/createlayout',
+    method: 'get'
+  })
+}
 export function fetchLayoutList(query) {
   return request({
     url: '/gridlayoutlist',
