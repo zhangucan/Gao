@@ -42,6 +42,10 @@ module.exports = {
       "/createlayout": {
         target: 'http://127.0.0.1:3000',
         changeOrigin: true,
+      },
+      "userinfo": {
+        target: 'http://127.0.0.1:3000',
+        changeOrigin: true,
       }
     },
 

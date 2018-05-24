@@ -1,5 +1,5 @@
-import { login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { login, logout, getInfo, getRSAkey } from '@/api/login'
+import { getToken, setToken, removeToken, encrypt } from '@/utils/auth'
 
 const user = {
   state: {
@@ -25,11 +25,12 @@ const user = {
   },
 
   actions: {
-    // 登录
-    Login({ commit }, userInfo) {
+    async Login({ commit }, userInfo) {
+      const rsa = await getRSAkey()
+      const password = encrypt(rsa.key, userInfo.password)
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password).then(response => {
+        login(username, password).then(response => {
           const data = response.data
           setToken(data.token)
           commit('SET_TOKEN', data.token)
@@ -39,12 +40,12 @@ const user = {
         })
       })
     },
-
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getInfo(state.token).then(response => {
+        getInfo().then(response => {
           const data = response.data
+          console.log(response)
           if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
             commit('SET_ROLES', data.roles)
           } else {
