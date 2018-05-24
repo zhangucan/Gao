@@ -91,7 +91,7 @@ export default {
 }
 .chart-detail{
   height: 80vh;
-  background-color: #CAD3DB;
+  background-color: #050d3c;
 }
 .el-menu{
   height: 80vh;

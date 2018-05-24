@@ -69,7 +69,6 @@ export default {
       _this.map.on('load', function() {
         _this.map.addControl(new mapboxgl.NavigationControl(), 'top-left')
         if (_this.vectorList && _this.vectorList.length > 0) {
-          console.log(_this.vectorList)
           _this.vectorList.forEach((item, index) => {
             _this.map.addSource(`customeFeature${item._id}`, {
               type: 'geojson',
