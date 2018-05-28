@@ -1,6 +1,10 @@
 <template>
-  <div class="app-container">
-    <el-row>
+  <el-row>
+    <sticky :className="'sub-navbar published'">
+      <el-button @click="returnMapCard">返回</el-button>
+    </sticky>
+    <div class="app-container">
+    <el-row class="margin-top30">
       <el-col :span="14" :offset="2">
         <el-steps :active="active" finish-status="success">
           <el-step title="基本信息"></el-step>
@@ -16,6 +20,7 @@
       </el-col>
     </el-row>
     <transition name="component-fade" mode="out-in">
+      <!-- 基本信息 -->
       <el-row class="mapshow" v-if="mapState === 0" key="editing">
         <el-col :span="16" :offset=4>
           <el-card class="box-card">
@@ -49,25 +54,26 @@
               </el-form-item>
             </el-form>
           </el-card>
-
         </el-col>
       </el-row>
+      <!-- 影像信息 -->
       <el-row v-if="mapState === 1" key="edited" class="mapshow">
-        <el-col :span="8">
+        <el-col :span="9" style="padding-right:20px;">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
               <span>影像地址</span>
             </div>
             <el-form ref="rasterForm" :model="rasterForm" label-width="120px">
               <el-form-item label="拍摄时间">
-                    <el-date-picker
-                      style="width:87%;"
-                      v-model="rasterForm.displayTime"
-                      type="datetime"
-                      size="large"
-                      format="yyyy-MM-dd HH-mm-ss"
-                      placeholder="选择日期时间">
-                    </el-date-picker>
+                 <el-date-picker
+                  style="width:87%;"
+                  size="large"
+                  v-model="rasterForm.displayTime"
+                  align="right"
+                  type="date"
+                  placeholder="选择日期"
+                  :picker-options="pickerOptions">
+                </el-date-picker>
               </el-form-item>
               <el-form-item label="发布地址">
                 <el-col :span="21">
@@ -79,14 +85,14 @@
               </el-form-item>
             </el-form>
           </el-card>
-          <el-card class="box-card">
+          <el-card class="box-card margin-top20">
             <div slot="header" class="clearfix">
               <span>影像列表</span>
             </div>
             <el-table :data="rasterList" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row>
-              <el-table-column prop="address" label="发布地址" width="246" align="center"></el-table-column>
-              <el-table-column align="center" prop="displayTime" label="日期" width="155"></el-table-column>
-              <el-table-column label="操作" width="150">
+              <el-table-column prop="address" class="hidden-content" label="发布地址" min-width="246" align="center"></el-table-column>
+              <el-table-column align="center" prop="displayTime" label="日期" min-width="155"></el-table-column>
+              <el-table-column label="操作" min-width="150" align="center">
                 <template slot-scope="scope">
                   <el-button
                     size="mini"
@@ -100,37 +106,44 @@
             </el-table>
           </el-card>
         </el-col>
-        <el-col :span="15" :offset="1">
+        <el-col :span="15">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
               <span>地图预览</span>
             </div>
-            <map-show mapWidth="100%" mapHeight="600px" :map-url="rasterForm.address" :lon="mapForm.lon" :lat="mapForm.lat"></map-show>
+            <map-show mapWidth="100%" mapHeight="600px" :lon="mapForm.lon" :lat="mapForm.lat" :vector-list="vectorList" :raster-list="rasterList" :raster-layer="rasterLayer"></map-show>
           </el-card>
         </el-col>
       </el-row>
       <el-row v-if="mapState === 2" key="edited2" class="mapshow">
-        <el-col :span="8">
+        <el-col :span="9" style="padding-right:20px;">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
               <span>矢量信息</span>
             </div>
             <el-form ref="vectorForm" :model="vectorForm" label-width="120px">
               <el-form-item label="矢量时间">
-                    <el-date-picker
-                      style="width:87%;"
-                      v-model="vectorForm.displayTime"
-                      type="datetime"
-                      size="large"
-                      format="yyyy-MM-dd HH-mm-ss"
-                      placeholder="选择日期时间">
-                    </el-date-picker>
+                <el-date-picker
+                  style="width:87%;"
+                  size="large"
+                  v-model="vectorForm.displayTime"
+                  align="right"
+                  type="date"
+                  placeholder="选择日期"
+                  :picker-options="pickerOptions">
+                </el-date-picker>
               </el-form-item>
               <el-form-item label="数据类型">
                 <el-col :span="21">
                   <el-select v-model="vectorForm.type" placeholder="请选择数据类型">
-                    <el-option label="裸地" value="裸地"></el-option>
-                    <el-option label="水域" value="水域"></el-option>
+                    <el-option label="耕地" value="耕地"></el-option>
+                    <el-option label="林地" value="林地"></el-option>
+                    <el-option label="草地" value="草地"></el-option>
+                    <el-option label="道路" value="道路"></el-option>
+                    <el-option label="水体" value="水体"></el-option>
+                    <el-option label="泥滩地" value="泥滩地"></el-option>
+                    <el-option label="建设用地" value="建设用地"></el-option>
+                    <el-option label="其它" value="其它"></el-option>
                   </el-select>
                 </el-col>
               </el-form-item>
@@ -160,7 +173,7 @@
             </el-table>
           </el-card>
         </el-col>
-        <el-col :span="15" :offset="1">
+        <el-col :span="15">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
               <span>GeoJSON 数据</span>
@@ -175,20 +188,23 @@
         <map-detail :map-desc="mapForm.desc" :map-title="mapForm.title" :lon="mapForm.lon" :lat="mapForm.lat" :raster-list="rasterList" :vector-list="vectorList"></map-detail>
       </el-row>
     </transition>
-
   </div>
+  </el-row>
 </template>
 <script>
 import * as mapApi from '../../api/map'
 import * as utils from '../../utils/index'
+import Sticky from '@/components/Sticky' // 粘性header组件
 import MapShow from '../MapShow/index'
 import MapDetail from '../MapDetail/index'
 import JsonEditor from '@/components/JsonEditor'
+import shortid from 'shortid'
 export default {
   components: {
     MapShow,
     JsonEditor,
-    MapDetail
+    MapDetail,
+    Sticky
   },
   watch: {
     mapState(val) {
@@ -211,18 +227,48 @@ export default {
       this.mapForm.lat = map.lat
       this.mapForm.desc = map.desc
       map.rasterLayers.forEach((item, index) => {
+        item.id = shortid.generate()
         this.rasterList.push(item)
       })
       vectorFeatures.forEach((item, index) => {
+        item.id = shortid.generate()
         item.vectorFeatures = item[item.featureType]
         this.vectorList.push(item)
       })
-      this.rasterList = utils.dedup(this.rasterList)
-      this.vectorList = utils.dedup(this.vectorList)
     }
   },
   data() {
     return {
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now()
+        },
+        shortcuts: [{
+          text: '今天',
+          onClick(picker) {
+            picker.$emit('pick', new Date())
+          }
+        }, {
+          text: '昨天',
+          onClick(picker) {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24)
+            picker.$emit('pick', date)
+          }
+        }, {
+          text: '上次输入时间',
+          onClick(picker) {
+            picker.$emit('pick', new Date(this.originTime))
+          }
+        }, {
+          text: '一周前',
+          onClick(picker) {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', date)
+          }
+        }]
+      },
       isFinish: false,
       value: { 'type': '空' },
       active: 0,
@@ -238,6 +284,7 @@ export default {
         displayTime: '',
         address: ''
       },
+      originTime: new Date(),
       vectorForm: {
         displayTime: '',
         type: '',
@@ -245,11 +292,18 @@ export default {
       },
       vectorList: [],
       rasterList: [],
+      rasterLayer: '',
       listLoading: false
       // vectorFeature: {}
     }
   },
   methods: {
+    returnMapCard() {
+      const obj = {
+        view: 'MapCard'
+      }
+      this.$store.dispatch('SetMapView', obj)
+    },
     async submitMapInfo() {
       this.loading = true
       const map = {
@@ -277,6 +331,7 @@ export default {
     rasterEdit(row) {
       this.rasterForm.displayTime = row.displayTime
       this.rasterForm.address = row.address
+      this.rasterLayer = row.id
     },
     rasterDelete(index) {
       this.rasterList.splice(index, 1)
@@ -317,28 +372,30 @@ export default {
       })
     },
     addRaster() {
+      this.originTime = this.rasterForm.displayTime
       const obj = {
+        id: shortid.generate(),
         address: this.rasterForm.address,
-        displayTime: utils.parseTime(this.rasterForm.displayTime)
+        displayTime: utils.parseTime(this.rasterForm.displayTime, '{y}-{m}-{d}')
       }
       if (obj.address && obj.displayTime) {
         this.rasterList.push(obj)
         this.rasterForm.displayTime = ''
         this.rasterForm.address = ''
       }
-      this.rasterList = utils.dedup(this.rasterList)
     },
     addVector() {
+      this.originTime = this.vectorForm.displayTime
       utils.parseJson(this.value).then(data => {
         const obj = {
+          id: shortid.generate(),
           type: this.vectorForm.type,
-          displayTime: utils.parseTime(this.vectorForm.displayTime),
+          displayTime: utils.parseTime(this.vectorForm.displayTime, '{y}-{m}-{d}'),
           vectorFeatures: data
         }
         this.vectorList.push(obj)
         this.vectorForm.displayTime = ''
         this.vectorForm.type = ''
-        this.rasterList = utils.dedup(this.rasterList)
       }).catch(error => {
         console.log(error)
         this.$message({
@@ -367,6 +424,9 @@ export default {
 }
 .el-select {
     width: 100%;
+}
+.margin-top30{
+  margin-top: 30px;
 }
 .margin-top20{
   margin-top: 20px;

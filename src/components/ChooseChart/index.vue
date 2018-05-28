@@ -19,7 +19,7 @@
           <el-row>
             <transition-group name="slide-fade">
               <el-col :span="8" v-for="(item, index) in currentChartList.children" :key="index" >
-                <el-card :body-style="{ padding: '0px' }" style="cursor:pointer;margin:10px;" :class= "{ chartOn: item.type == chartType }">
+                <el-card :body-style="{ padding: '0px' }" style="cursor:pointer;margin:10px;" :class= "{ chartOn: item.type === chartType.name }">
                   <img :src="formatImg(item)" class="image" @click="chooseChart(item)">
                   <div class="chart-name">
                     <span >{{ item.name }}</span>
@@ -85,16 +85,16 @@ export default {
 </script>
 <style lang="scss" scoped>
 .chart-list{
-  height: 80vh;
+  height: 83vh;
   background-color: #edf2f6;
   
 }
 .chart-detail{
-  height: 80vh;
+  height: 83vh;
   background-color: #050d3c;
 }
 .el-menu{
-  height: 80vh;
+  height: 83vh;
   width: 90px;
   background-color: rgba($color: #000000, $alpha: 0);
 }

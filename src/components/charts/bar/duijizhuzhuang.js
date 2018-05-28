@@ -18,11 +18,11 @@ const option = {
     bottom: '3%',
     containLabel: true
   },
-  xAxis: {
+  yAxis: {
     type: 'value',
     boundaryGap: [0, 0.01]
   },
-  yAxis: {
+  xAxis: {
     type: 'category',
     data: ['巴西', '印尼', '美国', '印度', '中国', '世界人口(万)']
   },

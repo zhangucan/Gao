@@ -15,6 +15,7 @@
   "dependencies": {
     "@handsontable-pro/vue": "^2.0.0-beta1",
     "@handsontable/vue": "^2.0.0-beta1",
+    "@mapbox/mapbox-gl-language": "^0.9.2",
     "@supermap/iclient-mapboxgl": "^9.0.1",
     "axios": "0.17.1",
     "codemirror": "^5.37.0",
@@ -33,6 +34,7 @@
     "nprogress": "0.2.0",
     "ramda": "0.24.1",
     "script-loader": "^0.7.2",
+    "shortid": "^2.2.8",
     "v-contextmenu": "^2.5.1",
     "vue": "2.5.10",
     "vue-grid-layout": "^2.1.13",

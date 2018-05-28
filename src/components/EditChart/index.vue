@@ -82,6 +82,7 @@
                     <el-option label="默认" value="{value}"></el-option>
                     <el-option label="%" value="{value} %"></el-option>
                     <el-option label="㎡" value="{value} ㎡"></el-option>
+                    <el-option label="亩" value="{value} 亩"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="旋转角度">
@@ -109,6 +110,7 @@
                     <el-option label="默认" value="{value}"></el-option>
                     <el-option label="%" value="{value} %"></el-option>
                     <el-option label="㎡" value="{value} ㎡"></el-option>
+                    <el-option label="亩" value="{value} 亩"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="旋转角度">
@@ -222,12 +224,11 @@ export default {
       }
       this.chartData = this.chart.getData()
       this.option = this.chart.getOption()
-      this.title = this.option.title[0]
-      this.grid = this.option.grid[0]
-      this.xAxis = this.option.xAxis[0]
-      this.yAxis = this.option.yAxis[0]
+      if (this.option.title[0]) this.title = this.option.title[0]
+      if (this.option.grid[0]) this.grid = this.option.grid[0]
+      if (this.option.xAxis[0]) this.xAxis = this.option.xAxis[0]
+      if (this.option.yAxis[0]) this.yAxis = this.option.yAxis[0]
       this.showOption = true
-      console.log(this.option)
     },
     chooseChart() {
       this.$store.dispatch('ClearComponent')
@@ -275,6 +276,7 @@ export default {
     this.init()
     const _this = this
     Bus.$on('tableChange', (content) => {
+      console.log(content)
       if (content) {
         _this.chart.setData(content)
       }

@@ -4,7 +4,7 @@
         <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="根据用户名搜索" v-model="listQuery.title">
         </el-input>
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
-              <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="el-icon-edit">添加</el-button>
+        <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="el-icon-edit">添加</el-button>
       </div>
       <el-table :data="list" v-loading="listLoading" element-loading-text="给我一点时间" :fit="true" highlight-current-row
       style="width: 100%">
@@ -58,14 +58,14 @@
             <span>{{scope.row.password}}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="权限">
+        <el-table-column align="center" label="用户角色">
           <template slot-scope="scope">
-            <span>{{scope.row.role}}</span>
+            <span>{{roleFormat(scope.row.role)}}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="权限2">
+        <el-table-column align="center" label="用户权限">
           <template slot-scope="scope">
-            <span>{{scope.row.gridLayouts}}</span>
+            <span>{{gridFormat(scope.row.gridLayouts)}}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -136,10 +136,31 @@ export default {
     }
   },
   methods: {
+    roleFormat(val) {
+      const temp = this.roles.find((item, index) => {
+        if (item.value === val) return item.title
+      })
+      return temp.title
+    },
+    gridFormat(val) {
+      let temp = []
+      const _this = this
+      val.forEach((item, index) => {
+        const obj = _this.gridLayoutList.find(item2 => {
+          if (item === item2._id) return item2
+        })
+        if (obj) {
+          temp += obj.title
+          temp += ', '
+        }
+      })
+      return temp
+    },
     async getList() {
       this.listLoading = true
       try {
         const temp = await userApi.getUserList(this.listQuery)
+        console.log(temp)
         this.list = temp.data.map(item => {
           item.edit = false
           item.originalPassword = item.password
@@ -213,7 +234,7 @@ export default {
       row.originalPassword = row.password
       await userApi.updateUser(row)
       this.$message({
-        message: 'The title has been edited',
+        message: '权限修改成功',
         type: 'success'
       })
     },

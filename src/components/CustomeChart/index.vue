@@ -18,7 +18,7 @@ export default {
     }
   },
   mounted() {
-    if (this.gridItem.type === 'map') {
+    if (this.gridItem.gridType === 'map') {
       this.view = 'ChooseChart'
     } else {
       if (this.gridItem.component.chartType) {

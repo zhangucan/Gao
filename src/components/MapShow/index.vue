@@ -1,10 +1,10 @@
 <template>
-  <div style='height:100%;width:100%;text-align:left;'>
-    <div ref='basicMapbox' :style='mapSize'></div>
-  </div>
+  <div ref="basicMapbox" :style="mapSize"></div>
 </template>
 <script>
 import mapboxgl from 'mapbox-gl'
+import * as util from '../../utils/index'
+import MapboxLanguage from '@mapbox/mapbox-gl-language'
 export default {
   props: {
     mapWidth: {
@@ -13,141 +13,168 @@ export default {
     mapHeight: {
       type: String
     },
-    mapUrl: {
-      type: String
-    },
     lon: {
       type: String
     },
     lat: {
       type: String
     },
-    vectorList: {
+    rasterList: {
       type: Array
     },
     chooseList: {
       type: Array
+    },
+    vectorList: {
+      type: Array
+    },
+    rasterLayer: {
+      type: String
     }
   },
   data() {
     return {
+      originRasterList: [],
+      originVectorList: [],
       map: {}
     }
   },
-  mounted() {
-    this.init()
+  watch: {
+    chooseList: {
+      handler(val) {
+        const _this = this
+        _this.originVectorList.forEach(item => {
+          _this.map.setLayoutProperty(`line${item}`, 'visibility', 'none')
+          _this.map.setLayoutProperty(`point${item}`, 'visibility', 'none')
+          _this.map.setLayoutProperty(`area${item}`, 'visibility', 'none')
+        })
+        val.forEach(item => {
+          _this.map.setLayoutProperty(`line${item}`, 'visibility', 'visible')
+          _this.map.setLayoutProperty(`point${item}`, 'visibility', 'visible')
+          _this.map.setLayoutProperty(`area${item}`, 'visibility', 'visible')
+        })
+        _this.originVectorList = [...val]
+      }
+    },
+    rasterList: {
+      handler(val) {
+        const _this = this
+        const temp = util.diffArr(val, _this.originRasterList)
+        temp.forEach(item => {
+          _this.fetchRasterLayer(item)
+        })
+        _this.originRasterList = [...val]
+      }
+    },
+    vectorList: {
+      handler(val) {
+        const _this = this
+        const temp = val.map(item => {
+          return item.id
+        })
+        const temp2 = util.diffArr(temp, _this.originVectorList)
+        temp2.forEach(item => {
+          const temp3 = val.find(item2 => {
+            return item === item2.id
+          })
+          if (temp3) _this.fetchVectorLayer(temp3)
+        })
+        _this.originRasterList = [...temp]
+      }
+    },
+    rasterLayer(val, oldVal) {
+      if (oldVal !== '') {
+        this.map.setLayoutProperty(`raster${oldVal}`, 'visibility', 'none')
+      }
+      if (val !== '') {
+        this.map.setLayoutProperty(`raster${val}`, 'visibility', 'visible')
+      }
+    }
   },
   methods: {
-    // 初始化
-    init() { //
+    init() {
+      const lon = this.lon || 120.165
+      const lat = this.lat || 20.74
       const _this = this
-      const url = 'http://127.0.0.1:8090/iserver/services/map-baiguihu/rest/maps/baiguihu'
-      const lon = this.lon || 113.24
-      const lat = this.lat || 33.73
-      mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmbDZmangifQ.-g_vE53SD2WrJ6tFX7QHmA'
-      _this.map = new mapboxgl.Map({
+      mapboxgl.accessToken = 'pk.eyJ1Ijoiemhhbmd1Y2FuIiwiYSI6ImNqaGhiMDNsOTA3bTQzNnJ4MWlvcnB3Z2sifQ.6TRDunIBxcLu9vuU4yuNhQ'
+      this.map = new mapboxgl.Map({
         container: this.$refs.basicMapbox,
-        style: {
-          'version': 8,
-          'sources': {
-            'raster-tiles': {
-              'type': 'raster',
-              'tiles': [url + '/zxyTileImage.png?prjCoordSys={"epsgCode":3857}&z={z}&x={x}&y={y}'],
-              'tileSize': 256
-            }
-          },
-          'layers': [{
-            'id': 'simple-tiles',
-            'type': 'raster',
-            'source': 'raster-tiles'
-          }]
-        },
+        style: 'mapbox://styles/mapbox/dark-v9',
         center: [lon, lat],
-        maxZoom: 18,
-        zoom: 16
+        zoom: 4
       })
+      const language = new MapboxLanguage({
+        defaultLanguage: 'zh'
+      })
+      this.map.addControl(new mapboxgl.NavigationControl(), 'top-left')
+      this.map.addControl(language)
       _this.map.on('load', function() {
-        _this.map.addControl(new mapboxgl.NavigationControl(), 'top-left')
+        if (_this.rasterList && _this.rasterList.length > 0) {
+          _this.rasterList.forEach((item, index) => {
+            _this.fetchRasterLayer(item)
+          })
+          _this.originRasterList = [..._this.rasterList]
+        }
         if (_this.vectorList && _this.vectorList.length > 0) {
           _this.vectorList.forEach((item, index) => {
-            _this.map.addSource(`customeFeature${item._id}`, {
-              type: 'geojson',
-              data: item.vectorFeatures
-            })
+            _this.fetchVectorLayer(item)
+          })
+          _this.originVectorList = _this.vectorList.map(item => {
+            return item.id
           })
         }
       })
     },
-    changeStyle(url) {
-      const _this = this
-      _this.map.setStyle({
-        'version': 8,
-        'sources': {
-          'raster-tiles': {
-            'type': 'raster',
-            'tiles': [url + '/zxyTileImage.png?prjCoordSys={"epsgCode":3857}&z={z}&x={x}&y={y}'],
-            'tileSize': 256
-          }
-        },
-        'layers': [{
-          'id': 'simple-tiles',
+    fetchRasterLayer(item) {
+      this.map.addLayer({
+        'id': `raster${item.id}`,
+        'source': {
           'type': 'raster',
-          'source': 'raster-tiles'
-        }]
+          'tiles': [`${item.address}` + '/zxyTileImage.png?prjCoordSys={"epsgCode":3857}&z={z}&x={x}&y={y}'],
+          'tileSize': 256
+        },
+        'type': 'raster'
       })
-      if (_this.vectorList && _this.vectorList.length > 0) {
-        _this.vectorList.forEach((item, index) => {
-          _this.map.addSource(`customeFeature${item._id}`, {
-            type: 'geojson',
-            data: item.vectorFeatures
-          })
-        })
-      }
+      this.map.setLayoutProperty(`raster${item.id}`, 'visibility', 'none')
     },
-    removeVector(id) {
-      const _this = this
-      if (_this.map.getLayer(`line${id}`)) {
-        _this.map.removeLayer(`line${id}`)
-      }
-      if (_this.map.getLayer(`area${id}`)) {
-        _this.map.removeLayer(`area${id}`)
-      }
-      if (_this.map.getLayer(`point${id}`)) {
-        _this.map.removeLayer(`point${id}`)
-      }
-    },
-    addGeoJson(id) {
-      const _this = this
-      _this.map.addLayer({
-        'id': `line${id}`,
+    fetchVectorLayer(item) {
+      this.map.addSource(`vector${item.id}`, {
+        type: 'geojson',
+        data: item.vectorFeatures
+      })
+      this.map.addLayer({
+        'id': `line${item.id}`,
         'type': 'line',
-        'source': `customeFeature${id}`,
+        'source': `vector${item.id}`,
         'paint': {
-          'line-color': '#888',
-          'line-width': 8
+          'line-color': '#B42222',
+          'line-width': 1
         },
         'filter': ['==', '$type', 'LineString']
       })
-      _this.map.addLayer({
-        'id': `area${id}`,
+      this.map.addLayer({
+        'id': `area${item.id}`,
         'type': 'fill',
-        'source': `customeFeature${id}`,
+        'source': `vector${item.id}`,
         'paint': {
-          'fill-color': '#888888',
+          'fill-color': '#B42222',
           'fill-opacity': 0.4
         },
         'filter': ['==', '$type', 'Polygon']
       })
-      _this.map.addLayer({
-        'id': `point${id}`,
+      this.map.addLayer({
+        'id': `point${item.id}`,
         'type': 'circle',
-        'source': `customeFeature${id}`,
+        'source': `vector${item.id}`,
         'paint': {
           'circle-radius': 6,
           'circle-color': '#B42222'
         },
         'filter': ['==', '$type', 'Point']
       })
+      this.map.setLayoutProperty(`area${item.id}`, 'visibility', 'none')
+      this.map.setLayoutProperty(`point${item.id}`, 'visibility', 'none')
+      this.map.setLayoutProperty(`line${item.id}`, 'visibility', 'none')
     }
   },
   computed: {
@@ -159,26 +186,14 @@ export default {
       return styleObj
     }
   },
-  watch: {
-    mapUrl(val) {
-      this.changeStyle(val)
-    },
-    chooseList(val, oldVal) {
-      const _this = this
-      if (oldVal && oldVal.length > 0) {
-        oldVal.forEach((item, index) => {
-          _this.removeVector(item._id)
-        })
-      }
-      if (val && val.length > 0) {
-        val.forEach((item, index) => {
-          _this.addGeoJson(item._id)
-        })
-      }
-    }
+  mounted() {
+    this.init()
   }
 }
 </script>
 <style>
-@import url('../../styles/mapbox-gl.css');
+@import url('../../../node_modules/mapbox-gl/dist/mapbox-gl.css');
+</style>
+<style lang="scss" scoped>
+
 </style>

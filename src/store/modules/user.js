@@ -45,7 +45,6 @@ const user = {
       return new Promise((resolve, reject) => {
         getInfo().then(response => {
           const data = response.data
-          console.log(response)
           if (data.role) { // 验证返回的roles是否是一个非空数组
             commit('SET_ROLES', data.role)
           } else {

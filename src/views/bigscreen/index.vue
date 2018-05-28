@@ -1,9 +1,7 @@
 <template>
-  <div class="app-container">
-    <transition name="component-fade" mode="out-in">
-      <component v-bind:is="view"></component>
-    </transition>
-  </div>
+  <transition name="component-fade" mode="out-in">
+    <component v-bind:is="view"></component>
+  </transition>
 </template>
 <script>
 import BigScreenCard from '../../components/BigScreenCard'

@@ -1,4 +1,8 @@
 const option = {
+  title: {
+    text: '世界人口总量',
+    subtext: '数据来自网络'
+  },
   tooltip: {
     trigger: 'axis',
     axisPointer: { // 坐标轴指示器，坐标轴触发有效

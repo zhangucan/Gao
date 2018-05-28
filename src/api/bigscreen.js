@@ -20,7 +20,13 @@ export function fetchLayoutList(query) {
     params: query
   })
 }
-
+export function deleteGridLayout(query) {
+  return request({
+    url: '/gridlayout',
+    method: 'delete',
+    params: query
+  })
+}
 export function fetchGridItem(query) {
   return request({
     url: '/griditem',

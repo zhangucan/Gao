@@ -1,34 +1,41 @@
 <template>
-  <div class="app-container">
-    <el-row>
-      <el-col :span="8">
-        <el-select v-model="view" placeholder="选择类型">
-          <el-option label="地图" value="CustomeMap"></el-option>
-          <el-option label="图表" value="CustomeChart"></el-option>
-        </el-select>
-      </el-col>
-      <el-col :span="4" :offset="12">
-        <el-button type="primary" @click="saveGridItem">完成修改</el-button>
-        <el-button @click="returnBigScreenHome">返回</el-button>
-      </el-col>
-    </el-row>
-
-    <transition name="component-fade" mode="out-in">
-      <component v-bind:is="view"></component>
-    </transition>
-
+  <div>
+    <sticky :className="'sub-navbar published'">
+      <el-dropdown trigger="click">
+        <el-button plain>{{view === "CustomeMap"?'地图':'图表'}}
+          <i class="el-icon-caret-bottom el-icon--right"></i>
+        </el-button>
+        <el-dropdown-menu class="no-padding" slot="dropdown">
+          <el-dropdown-item>
+            <el-radio-group style="padding: 10px;" v-model="view">
+              <el-radio label="CustomeMap">地图</el-radio>
+              <el-radio label="CustomeChart">图表</el-radio>
+            </el-radio-group>
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <el-button type="primary" @click="saveGridItem">完成修改</el-button>
+      <el-button @click="returnBigScreenHome">返回</el-button>
+    </sticky>
+    <div class="app-container">
+      <transition name="component-fade" mode="out-in">
+        <component v-bind:is="view"></component>
+      </transition>
+    </div>
   </div>
 </template>
 <script>
 import CustomeMap from '../CustomeMap'
 import CustomeChart from '../CustomeChart'
 import MapShow from '../MapShow'
+import Sticky from '@/components/Sticky' // 粘性header组件
 import * as bigscreenApi from '../../api/bigscreen'
 export default {
   components: {
     MapShow,
     CustomeMap,
-    CustomeChart
+    CustomeChart,
+    Sticky
   },
   computed: {
   },

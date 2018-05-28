@@ -1,52 +1,83 @@
 <template>
-  <div class="app-container">
-    <el-row>
-      <el-col :span="4" :offset="20">
-        <el-button type="primary" @click="saveGridItem">完成修改</el-button>
-        <el-button @click="returnBigScreenHome">返回</el-button>
-      </el-col>
-    </el-row>
-    <grid-layout
-    :layout='layout'
-    :col-num='12'
-    :row-height='30'
-    :is-draggable='true'
-    :is-resizable='true'
-    :is-mirrored='false'
-    :vertical-compact='true'
-    :margin='[30,30,30,30]'
-    :use-css-transforms='true'
-  >
-      <grid-item class="grid" v-for='(item, index) in layout'
-        :x='item.x'
-        :y='item.y'
-        :w='item.w'
-        :h='item.h'
-        :i='item.i'
-        :key='index'>
-        <button class="pan-btn blue-btn detail" @click="showDetail(item)">修改内容</button>
-      </grid-item>
-    </grid-layout>
+  <div>
+    <sticky :className="'sub-navbar published'">
+      <el-button type="success" @click="saveGridItem">完成修改</el-button>
+      <el-button type="danger" @click="deleteGridItem">删除</el-button>
+      <el-button @click="returnBigScreenHome">返回</el-button>
+    </sticky>
+
+    <div class="createPost-main-container">
+      <MDinput name="name" v-model="gridLayout.title" required :maxlength="100">标题</MDinput>
+      <grid-layout
+      :layout='layout'
+      :col-num='12'
+      :row-height='30'
+      :is-draggable='true'
+      :is-resizable='true'
+      :is-mirrored='false'
+      :vertical-compact='true'
+      :margin='[30,30,30,30]'
+      :use-css-transforms='true'
+    >
+        <grid-item class="grid" v-for='(item, index) in layout'
+          :x='item.x'
+          :y='item.y'
+          :w='item.w'
+          :h='item.h'
+          :i='item.i'
+          :key='index'>
+          <button class="pan-btn blue-btn detail" @click="showDetail(item)">修改内容</button>
+        </grid-item>
+      </grid-layout>
+    </div>
   </div>
 </template>
 <script>
 import VueGridLayout from 'vue-grid-layout'
 import * as bigscreenApi from '../../api/bigscreen'
+import Sticky from '@/components/Sticky' // 粘性header组件
+import MDinput from '@/components/MDinput'
 var GridLayout = VueGridLayout.GridLayout
 var GridItem = VueGridLayout.GridItem
 export default {
   methods: {
+    async confirmEdit() {
+    },
+    cancelEdit() {
+      this.gridLayout.title = this.originTtitle
+    },
     async showDetail(item) {
       this.loading = true
       const obj = {
         view: 'BigScreenItem'
       }
-      await this.$store.dispatch('FetchGridItem', { _id: item._id })
+      await this.$store.dispatch('FetchGridItem', item._id)
       await this.$store.dispatch('SetCurrentComponent', this.$store.state.bigscreen.gridItem.component)
       this.loading = false
       await this.$store.dispatch('SetScreenView', obj)
     },
+    deleteGridItem() {
+      const obj = {
+        _id: this.gridLayout._id
+      }
+      const _this = this
+      bigscreenApi.deleteGridLayout(obj).then(err => {
+        if (err) {
+          _this.$message({
+            message: err,
+            type: 'warning'
+          })
+        }
+        const obj = {
+          view: 'BigScreenCard'
+        }
+        this.loading = true
+        this.$store.dispatch('SetScreenView', obj)
+        this.loading = false
+      })
+    },
     saveGridItem() {
+      this.$store.dispatch('SetGridLayout', this.gridLayout.title)
       const obj = {
         gridLayout: this.$store.state.bigscreen.gridLayout,
         gridItems: this.$store.state.bigscreen.gridItems
@@ -68,7 +99,16 @@ export default {
   },
   components: {
     GridLayout,
-    GridItem
+    MDinput,
+    GridItem,
+    Sticky
+  },
+  data() {
+    return {
+      edit: false,
+      gridLayout: this.$store.state.bigscreen.gridLayout,
+      originTtitle: this.$store.state.bigscreen.gridLayout.title
+    }
   },
   computed: {
     layout() {
@@ -79,7 +119,18 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style rel="stylesheet/scss" lang="scss" scoped>
+  @import "src/styles/mixin.scss";
+  .title-prompt{
+    position: absolute;
+    right: 0px;
+    font-size: 12px;
+    top:10px;
+    color:#ff4949;
+  }
+  .createPost-main-container {
+      padding: 40px 45px 20px 50px;
+  }
 .grid{
   background: #adbed4;
   border-radius: 4px 

@@ -100,14 +100,12 @@ const bigscreen = {
     FETCH_ALL_LAYOUT: (state, data) => {
       state.layoutList = data.gridLayoutList
     },
-    FETCH_GRID_ITEM: (state, data) => {
-      if (data.gridItem.gridType === 'map') {
-        if (!data.gridItem.component.vectorList) data.gridItem.component.vectorList = []
-        if (!data.gridItem.component.rasterList) data.gridItem.component.rasterList = []
-      } else {
-        if (!data.gridItem.component.name) data.gridItem.component.name = ''
+    FETCH_GRID_ITEM: (state, gridItem) => {
+      if (gridItem.gridType === 'map') {
+        if (!gridItem.component.vectorList) gridItem.component.vectorList = []
+        if (!gridItem.component.rasterList) gridItem.component.rasterList = []
       }
-      state.gridItem = data.gridItem
+      state.gridItem = gridItem.gridItem
     },
     GRID_FETCH_MAP: (state, data) => {
       const obj = {
@@ -115,6 +113,9 @@ const bigscreen = {
         vectorFeatures: data.vectorFeatures
       }
       state.mapInfo = obj
+    },
+    SET_GRID_LAYOUT: (state, data) => {
+      state.gridLayout.title = data
     },
     GRID_FETCH_ALL_MAP: (state, data) => {
       state.gridMapList = data
@@ -166,15 +167,18 @@ const bigscreen = {
         })
       })
     },
+    SetGridLayout({ commit }, obj) {
+      commit('SET_GRID_LAYOUT', obj)
+    },
     ClearCurrentComponent({ commit }) {
       commit('CLEAR_CURRENT_COMPONENT')
     },
     SetCurrentComponent({ commit }, obj) {
       commit('SET_CURRENT_COMPONENT', obj)
     },
-    FetchGridItem({ commit }, obj) {
+    FetchGridItem({ commit, state }, obj) {
       return new Promise((resolve, reject) => {
-        bigscreenApi.fetchGridItem(obj).then(response => {
+        bigscreenApi.fetchGridItem({ _id: obj }).then(response => {
           commit('FETCH_GRID_ITEM', response)
           resolve()
         }).catch(error => {

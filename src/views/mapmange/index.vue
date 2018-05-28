@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div>
     <transition name="component-fade" mode="out-in">
         <keep-alive>
           <component v-bind:is="view"></component>

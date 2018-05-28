@@ -1,4 +1,8 @@
 const option = {
+  title: {
+    text: '世界人口总量',
+    subtext: '数据来自网络'
+  },
   tooltip: {
     trigger: 'axis',
     axisPointer: {
