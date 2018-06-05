@@ -1,9 +1,7 @@
 <template>
   <div>
     <transition name="component-fade" mode="out-in">
-        <keep-alive>
-          <component v-bind:is="view"></component>
-        </keep-alive>
+      <component v-bind:is="view"></component>
     </transition>
   </div>
 </template>

@@ -10,14 +10,13 @@ const bigscreen = {
       state.currentView = obj.view
     },
     FETCH_MAP: (state, data) => {
-      const obj = {
-        map: data.map,
-        vectorFeatures: data.vectorFeatures
-      }
-      state.mapInfo = obj
+      state.mapInfo = data
     },
     FETCH_ALL_MAP: (state, data) => {
       state.mapLsit = data
+    },
+    CREATE_MAP_VIEW: (state) => {
+      state.mapInfo = null
     }
   },
   actions: {
@@ -30,17 +29,20 @@ const bigscreen = {
     FetchMap({ commit, state }, obj) {
       return new Promise((resolve, reject) => {
         mapApi.fetchMap(obj).then(response => {
-          commit('FETCH_MAP', response)
+          commit('FETCH_MAP', response.data)
           resolve()
         }).catch(error => {
           reject(error)
         })
       })
     },
+    CreateMapView({ commit, state }) {
+      commit('CREATE_MAP_VIEW')
+    },
     FetchAllMap({ commit, state }, obj) {
       return new Promise((resolve, reject) => {
         mapApi.fetchMapList().then(response => {
-          commit('FETCH_ALL_MAP', response.mapLsit)
+          commit('FETCH_ALL_MAP', response.data)
           resolve()
         }).catch(error => {
           reject(error)

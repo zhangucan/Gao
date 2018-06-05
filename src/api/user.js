@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getUserList() {
   return request({
-    url: '/user/list',
+    url: '/user/users',
     method: 'get'
   })
 }

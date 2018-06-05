@@ -70,12 +70,12 @@ export default {
       handler(val) {
         const _this = this
         const temp = val.map(item => {
-          return item.id
+          return item._id
         })
         const temp2 = util.diffArr(temp, _this.originVectorList)
         temp2.forEach(item => {
           const temp3 = val.find(item2 => {
-            return item === item2.id
+            return item === item2._id
           })
           if (temp3) _this.fetchVectorLayer(temp3)
         })
@@ -101,7 +101,7 @@ export default {
         container: this.$refs.basicMapbox,
         style: 'mapbox://styles/mapbox/dark-v9',
         center: [lon, lat],
-        zoom: 4
+        zoom: 11
       })
       const language = new MapboxLanguage({
         defaultLanguage: 'zh'
@@ -120,14 +120,14 @@ export default {
             _this.fetchVectorLayer(item)
           })
           _this.originVectorList = _this.vectorList.map(item => {
-            return item.id
+            return item._id
           })
         }
       })
     },
     fetchRasterLayer(item) {
       this.map.addLayer({
-        'id': `raster${item.id}`,
+        'id': `raster${item._id}`,
         'source': {
           'type': 'raster',
           'tiles': [`${item.address}` + '/zxyTileImage.png?prjCoordSys={"epsgCode":3857}&z={z}&x={x}&y={y}'],
@@ -135,17 +135,17 @@ export default {
         },
         'type': 'raster'
       })
-      this.map.setLayoutProperty(`raster${item.id}`, 'visibility', 'none')
+      this.map.setLayoutProperty(`raster${item._id}`, 'visibility', 'none')
     },
     fetchVectorLayer(item) {
-      this.map.addSource(`vector${item.id}`, {
+      this.map.addSource(`vector${item._id}`, {
         type: 'geojson',
-        data: item.vectorFeatures
+        data: item.featurecollection
       })
       this.map.addLayer({
-        'id': `line${item.id}`,
+        'id': `line${item._id}`,
         'type': 'line',
-        'source': `vector${item.id}`,
+        'source': `vector${item._id}`,
         'paint': {
           'line-color': '#B42222',
           'line-width': 1
@@ -153,9 +153,9 @@ export default {
         'filter': ['==', '$type', 'LineString']
       })
       this.map.addLayer({
-        'id': `area${item.id}`,
+        'id': `area${item._id}`,
         'type': 'fill',
-        'source': `vector${item.id}`,
+        'source': `vector${item._id}`,
         'paint': {
           'fill-color': '#B42222',
           'fill-opacity': 0.4
@@ -163,18 +163,18 @@ export default {
         'filter': ['==', '$type', 'Polygon']
       })
       this.map.addLayer({
-        'id': `point${item.id}`,
+        'id': `point${item._id}`,
         'type': 'circle',
-        'source': `vector${item.id}`,
+        'source': `vector${item._id}`,
         'paint': {
           'circle-radius': 6,
           'circle-color': '#B42222'
         },
         'filter': ['==', '$type', 'Point']
       })
-      this.map.setLayoutProperty(`area${item.id}`, 'visibility', 'none')
-      this.map.setLayoutProperty(`point${item.id}`, 'visibility', 'none')
-      this.map.setLayoutProperty(`line${item.id}`, 'visibility', 'none')
+      this.map.setLayoutProperty(`area${item._id}`, 'visibility', 'none')
+      this.map.setLayoutProperty(`point${item._id}`, 'visibility', 'none')
+      this.map.setLayoutProperty(`line${item._id}`, 'visibility', 'none')
     }
   },
   computed: {

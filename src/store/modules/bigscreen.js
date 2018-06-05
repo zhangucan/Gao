@@ -1,5 +1,170 @@
 import * as bigscreenApi from '../../api/bigscreen'
 import * as mapApi from '../../api/map'
+const layout = {
+  'gridItems': [
+    {
+      '_id': '5b138d5001517533f9610317',
+      'gridType': 'map',
+      'i': '1',
+      'x': 0,
+      'y': 0,
+      'w': 3,
+      'h': 4,
+      'component': {
+        'id': '',
+        'rasterLayers': [],
+        'vectorLayers': []
+      }
+    },
+    {
+      'gridType': 'map',
+      'i': '2',
+      'x': 0,
+      'y': 0,
+      'w': 3,
+      'h': 4,
+      'component': {
+        'id': '',
+        'rasterLayers': [],
+        'vectorLayers': []
+      }
+    },
+    {
+      'gridType': 'map',
+      'i': '3',
+      'x': 0,
+      'y': 0,
+      'w': 3,
+      'h': 4,
+      'component': {
+        'id': '',
+        'rasterLayers': [],
+        'vectorLayers': []
+      }
+    },
+    {
+      'gridType': 'map',
+      'i': '4',
+      'x': 0,
+      'y': 0,
+      'w': 3,
+      'h': 4,
+      'component': {
+        'id': '',
+        'rasterLayers': [],
+        'vectorLayers': []
+      }
+    },
+    {
+      'gridType': 'map',
+      'i': '5',
+      'x': 0,
+      'y': 0,
+      'w': 3,
+      'h': 4,
+      'component': {
+        'id': '',
+        'rasterLayers': [],
+        'vectorLayers': []
+      }
+    },
+    {
+      'gridType': 'map',
+      'i': '6',
+      'x': 0,
+      'y': 0,
+      'w': 3,
+      'h': 4,
+      'component': {
+        'id': '',
+        'rasterLayers': [],
+        'vectorLayers': []
+      }
+    },
+    {
+      'gridType': 'map',
+      'i': '7',
+      'x': 0,
+      'y': 0,
+      'w': 3,
+      'h': 4,
+      'component': {
+        'id': '',
+        'rasterLayers': [],
+        'vectorLayers': []
+      }
+    },
+    {
+      'gridType': 'map',
+      'i': '8',
+      'x': 0,
+      'y': 0,
+      'w': 3,
+      'h': 4,
+      'component': {
+        'id': '',
+        'rasterLayers': [],
+        'vectorLayers': []
+      }
+    },
+    {
+      'gridType': 'map',
+      'i': '9',
+      'x': 0,
+      'y': 0,
+      'w': 3,
+      'h': 4,
+      'component': {
+        'id': '',
+        'rasterLayers': [],
+        'vectorLayers': []
+      }
+    },
+    {
+      'gridType': 'map',
+      'i': '10',
+      'x': 0,
+      'y': 0,
+      'w': 3,
+      'h': 4,
+      'component': {
+        'id': '',
+        'rasterLayers': [],
+        'vectorLayers': []
+      }
+    },
+    {
+      'gridType': 'map',
+      'i': '11',
+      'x': 0,
+      'y': 0,
+      'w': 3,
+      'h': 4,
+      'component': {
+        'id': '',
+        'rasterLayers': [],
+        'vectorLayers': []
+      }
+    },
+    {
+      'gridType': 'map',
+      'i': '12',
+      'x': 0,
+      'y': 0,
+      'w': 3,
+      'h': 4,
+      'component': {
+        'id': '',
+        'rasterLayers': [],
+        'vectorLayers': []
+      }
+    }
+  ],
+  '_id': '5b138d5001517533f9610316',
+  'title': 'test456789',
+  'desc': 'test',
+  'num': 9
+}
 const chartList = [
   {
     name: '柱状图',
@@ -94,18 +259,19 @@ const bigscreen = {
       state.currentView = obj.view
     },
     FETCH_LAYOUT: (state, data) => {
-      state.gridLayout = data.gridLayout
+      state.gridLayout = data
       state.gridItems = data.gridItems
     },
     FETCH_ALL_LAYOUT: (state, data) => {
-      state.layoutList = data.gridLayoutList
+      state.layoutList = data
     },
-    FETCH_GRID_ITEM: (state, gridItem) => {
-      if (gridItem.gridType === 'map') {
-        if (!gridItem.component.vectorList) gridItem.component.vectorList = []
-        if (!gridItem.component.rasterList) gridItem.component.rasterList = []
-      }
-      state.gridItem = gridItem.gridItem
+    FETCH_GRID_ITEM: (state, id) => {
+      state.gridItem = state.gridItems.find(item => {
+        return id === item._id
+      })
+    },
+    SET_SCREEN_MAP: (state, id) => {
+      state.currentMap = id
     },
     GRID_FETCH_MAP: (state, data) => {
       const obj = {
@@ -129,11 +295,14 @@ const bigscreen = {
     CLEAR_COMPONENT: (state) => {
       state.gridItem.component = {}
     },
-    SET_CURRENT_COMPONENT: (state, data) => {
-      state.currentComponent = data
+    SET_CURRENT_COMPONENT: (state) => {
+      state.currentComponent = state.gridItem.component
     },
     SAVE_GRID_ITEM: (state, data) => {
-      state.gridItem = data
+      const index = state.gridItems.findIndex(item => {
+        return state.gridItem._id === item._id
+      })
+      state.gridItems[index] = state.gridItem
     }
   },
   actions: {
@@ -146,6 +315,9 @@ const bigscreen = {
           reject(error)
         })
       })
+    },
+    SetScreenMap({ commit, state }, obj) {
+      commit('SET_SCREEN_MAP', obj)
     },
     GridFetchAllMap({ commit, state }, obj) {
       return new Promise((resolve, reject) => {
@@ -173,18 +345,11 @@ const bigscreen = {
     ClearCurrentComponent({ commit }) {
       commit('CLEAR_CURRENT_COMPONENT')
     },
-    SetCurrentComponent({ commit }, obj) {
-      commit('SET_CURRENT_COMPONENT', obj)
+    SetCurrentComponent({ commit }) {
+      commit('SET_CURRENT_COMPONENT')
     },
     FetchGridItem({ commit, state }, obj) {
-      return new Promise((resolve, reject) => {
-        bigscreenApi.fetchGridItem({ _id: obj }).then(response => {
-          commit('FETCH_GRID_ITEM', response)
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
-      })
+      commit('FETCH_GRID_ITEM', obj)
     },
     // 大屏管理当前展示视图
     SetScreenView({ commit }, obj) {
@@ -193,7 +358,7 @@ const bigscreen = {
     FetchAllLayout({ commit, state }, obj) {
       return new Promise((resolve, reject) => {
         bigscreenApi.fetchLayoutList().then(response => {
-          commit('FETCH_ALL_LAYOUT', response)
+          commit('FETCH_ALL_LAYOUT', response.data)
           resolve()
         }).catch(error => {
           reject(error)
@@ -202,8 +367,8 @@ const bigscreen = {
     },
     CreateLayout({ commit, state }) {
       return new Promise((resolve, reject) => {
-        bigscreenApi.createLayout().then(response => {
-          commit('FETCH_LAYOUT', response)
+        bigscreenApi.createLayout(layout).then(response => {
+          commit('FETCH_LAYOUT', response.data)
           resolve()
         }).catch(error => {
           reject(error)
@@ -213,7 +378,7 @@ const bigscreen = {
     FetchLayout({ commit, state }, obj) {
       return new Promise((resolve, reject) => {
         bigscreenApi.fetchLayout(obj).then(response => {
-          commit('FETCH_LAYOUT', response)
+          commit('FETCH_LAYOUT', response.data)
           resolve()
         }).catch(error => {
           reject(error)
@@ -227,7 +392,7 @@ const bigscreen = {
       commit('CLEAR_COMPONENT')
     },
     SaveGridItem({ commit, state }, obj) {
-      commit('SAVE_GRID_ITEM', obj)
+      commit('SAVE_GRID_ITEM')
     }
   }
 }

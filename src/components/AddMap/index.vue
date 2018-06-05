@@ -218,21 +218,18 @@ export default {
   mounted() {
     this.vectorList = []
     this.rasterList = []
-    if (this.$store.state.map.mapInfo) {
-      const map = this.$store.state.map.mapInfo.map
-      const vectorFeatures = this.$store.state.map.mapInfo.vectorFeatures
+    if (this.mapInfo) {
+      const map = this.mapInfo
+      const vectorFeatures = this.mapInfo.vectorLayers
       this.mapId = map._id
       this.mapForm.title = map.title
       this.mapForm.lon = map.lon
       this.mapForm.lat = map.lat
       this.mapForm.desc = map.desc
       map.rasterLayers.forEach((item, index) => {
-        item.id = shortid.generate()
         this.rasterList.push(item)
       })
       vectorFeatures.forEach((item, index) => {
-        item.id = shortid.generate()
-        item.vectorFeatures = item[item.featureType]
         this.vectorList.push(item)
       })
     }
@@ -269,6 +266,7 @@ export default {
           }
         }]
       },
+      mapInfo: this.$store.state.map.mapInfo,
       isFinish: false,
       value: { 'type': '空' },
       active: 0,
@@ -305,33 +303,53 @@ export default {
       this.$store.dispatch('SetMapView', obj)
     },
     async submitMapInfo() {
-      this.loading = true
       const map = {
         title: this.mapForm.title,
         lon: this.mapForm.lon,
         lat: this.mapForm.lat,
         desc: this.mapForm.desc,
         rasterLayers: this.rasterList,
-        vectorFeatures: this.vectorList
+        vectorLayers: this.vectorList
       }
       if (this.mapId) {
         map._id = this.mapId
+        try {
+          await mapApi.updateMap(map)
+          this.$notify({
+            title: '成功',
+            message: '更新成功',
+            type: 'success'
+          })
+        } catch (error) {
+          this.$notify.error({
+            title: '失败',
+            message: '更新失败'
+          })
+        }
+      } else {
+        try {
+          await mapApi.saveMap(map)
+          this.$notify({
+            title: '成功',
+            message: '更新成功',
+            type: 'success'
+          })
+        } catch (error) {
+          this.$notify.error({
+            title: '失败',
+            message: '更新失败'
+          })
+        }
       }
-      await mapApi.saveMap(map)
       const obj = {
         view: 'MapCard'
       }
-      this.$store.dispatch('SetMapView', obj).then(() => {
-        this.loading = false
-        this.$router.push({ path: '/' })
-      }).catch(() => {
-        this.loading = false
-      })
+      this.$store.dispatch('SetMapView', obj)
     },
     rasterEdit(row) {
       this.rasterForm.displayTime = row.displayTime
       this.rasterForm.address = row.address
-      this.rasterLayer = row.id
+      this.rasterLayer = row._id
     },
     rasterDelete(index) {
       this.rasterList.splice(index, 1)
@@ -340,13 +358,13 @@ export default {
     },
     vectorEdit(row, index) {
       this.vectorForm.displayTime = row.displayTime
-      this.value = this.vectorList[index].vectorFeatures
+      this.value = this.vectorList[index].featurecollection
     },
     vectorDelete(index) {
       this.vectorList.splice(index, 1)
       this.vectorForm.displayTime = ''
       this.vectorForm.type = ''
-      this.vectorForm.vectorFeatures = {}
+      this.vectorForm.featurecollection = {}
     },
     next() {
       if (this.active++ > 4) {
@@ -362,19 +380,10 @@ export default {
         this.mapState = this.active
       }
     },
-    onSubmit() {
-      this.$message('submit!')
-    },
-    onCancel() {
-      this.$message({
-        message: 'cancel!',
-        type: 'warning'
-      })
-    },
     addRaster() {
       this.originTime = this.rasterForm.displayTime
       const obj = {
-        id: shortid.generate(),
+        _id: shortid.generate(),
         address: this.rasterForm.address,
         displayTime: utils.parseTime(this.rasterForm.displayTime, '{y}-{m}-{d}')
       }
@@ -388,10 +397,10 @@ export default {
       this.originTime = this.vectorForm.displayTime
       utils.parseJson(this.value).then(data => {
         const obj = {
-          id: shortid.generate(),
+          _id: shortid.generate(),
           type: this.vectorForm.type,
           displayTime: utils.parseTime(this.vectorForm.displayTime, '{y}-{m}-{d}'),
-          vectorFeatures: data
+          featurecollection: data
         }
         this.vectorList.push(obj)
         this.vectorForm.displayTime = ''

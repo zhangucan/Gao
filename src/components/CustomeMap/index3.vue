@@ -42,6 +42,7 @@
 import * as mapApi from '../../api/map'
 import * as utils from '../../utils/index'
 // import Bus from '../../utils/bus'
+import shortid from 'shortid'
 import DndList from '../DndList'
 import MapShow from '../MapShow'
 export default {
@@ -98,9 +99,9 @@ export default {
         mapApi.fetchMap({ _id: val }).then(data => {
           if (data.map.rasterLayers.length > 0) {
             const tempList = []
-            data.map.rasterLayers.forEach((item, index) => {
+            data.map.rasterLayers.forEach((item) => {
               const obj = {
-                id: index,
+                id: shortid.generate(),
                 address: item.address,
                 title: item.displayTime
               }
@@ -113,7 +114,7 @@ export default {
             const _this = this
             data.vectorFeatures.forEach((item, index) => {
               const obj = {
-                id: index,
+                id: shortid.generate(),
                 _id: item._id,
                 title: item.type + ' | ' + item.displayTime
               }

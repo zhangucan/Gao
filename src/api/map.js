@@ -1,25 +1,31 @@
 import request from '@/utils/request'
 
-export function fetchMap(query) {
+export function fetchMap(id) {
   return request({
-    url: '/map',
-    method: 'get',
-    params: query
+    url: `/map/maps/${id}`,
+    method: 'get'
   })
 }
 
-export function fetchMapList(query) {
+export function fetchMapList() {
   return request({
-    url: '/maps',
-    method: 'get',
-    params: query
+    url: '/map/maps',
+    method: 'get'
   })
 }
 
 export function saveMap(data) {
   return request({
-    url: '/map/savemap',
+    url: '/map/map',
     method: 'post',
+    data
+  })
+}
+
+export function updateMap(data) {
+  return request({
+    url: '/map/map',
+    method: 'put',
     data
   })
 }

@@ -1,30 +1,28 @@
 import request from '@/utils/request'
 
-export function fetchLayout(query) {
+export function fetchLayout(id) {
   return request({
-    url: '/gridlayout',
-    method: 'get',
-    params: query
+    url: `/gridlayout/gridlayouts/${id}`,
+    method: 'get'
   })
 }
-export function createLayout() {
+export function createLayout(data) {
   return request({
-    url: '/createlayout',
-    method: 'get'
+    url: '/gridlayout/gridlayout',
+    method: 'post',
+    data
   })
 }
 export function fetchLayoutList(query) {
   return request({
-    url: '/gridlayoutlist',
-    method: 'get',
-    params: query
+    url: '/gridlayout/gridlayouts',
+    method: 'get'
   })
 }
-export function deleteGridLayout(query) {
+export function deleteGridLayout(id) {
   return request({
-    url: '/gridlayout',
-    method: 'delete',
-    params: query
+    url: `/gridlayout/gridlayouts/${id}`,
+    method: 'delete'
   })
 }
 export function fetchGridItem(query) {
@@ -51,10 +49,10 @@ export function saveGridItem(data) {
   })
 }
 
-export function saveGridLayout(data) {
+export function updateGridLayout(data) {
   return request({
-    url: '/gridlayout',
-    method: 'post',
+    url: '/gridlayout/gridlayout',
+    method: 'put',
     data
   })
 }

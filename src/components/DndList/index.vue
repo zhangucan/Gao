@@ -3,8 +3,8 @@
     <div class="dndList-list" :style="{width:width1}">
       <h3>{{list1Title}}</h3>
       <draggable :list="list1" class="dragArea" :options="{group:'article'}">
-        <div class="list-complete-item" v-for="element in list1" :key='element.id'>
-          <div class="list-complete-item-handle">{{element.title}}</div>
+        <div class="list-complete-item" v-for="(element, index) in list1" :key='index'>
+          <div class="list-complete-item-handle">{{element.type}}{{element.displayTime}}</div>
           <div style="position:absolute;right:0px;">
             <span style="float: right ;margin-top: -16px;margin-right:5px;" @click="deleteEle(element)">
               <i style="color:#ff4949" class="el-icon-delete"></i>
@@ -16,8 +16,8 @@
     <div class="dndList-list" :style="{width:width2}">
       <h3>{{list2Title}}</h3>
       <draggable :list="filterList2" class="dragArea" :options="{group:'article'}">
-        <div class="list-complete-item" v-for="element in filterList2" :key='element.id'>
-          <div class='list-complete-item-handle2' @click="pushEle(element)">{{element.title}}</div>
+        <div class="list-complete-item" v-for="(element, index) in filterList2" :key='index'>
+          <div class='list-complete-item-handle2' @click="pushEle(element)">{{element.type}}  {{element.displayTime}}</div>
         </div>
       </draggable>
     </div>
@@ -80,14 +80,14 @@ export default {
       this.$emit('listChange')
     },
     isNotInList1(v) {
-      return this.list1.every(k => v.id !== k.id)
+      return this.list1.every(k => v._id !== k._id)
     },
     isNotInList2(v) {
-      return this.list2.every(k => v.id !== k.id)
+      return this.list2.every(k => v._id !== k._id)
     },
     deleteEle(ele) {
       for (const item of this.list1) {
-        if (item.id === ele.id) {
+        if (item._id === ele._id) {
           const index = this.list1.indexOf(item)
           this.list1.splice(index, 1)
           break

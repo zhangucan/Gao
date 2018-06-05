@@ -240,7 +240,7 @@ export default {
         option: this.chart.getOption()
       }
       this.gridItem.component = obj
-      this.$store.dispatch('SaveGridItem', this.gridItem)
+      this.$store.dispatch('SaveGridItem')
     }
   },
   watch: {

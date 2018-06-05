@@ -11,9 +11,9 @@ export function login(username, password) {
   })
 }
 
-export function getInfo() {
+export function getInfo(_id) {
   return request({
-    url: '/user/info',
+    url: `/user/info`,
     method: 'get'
   })
 }
@@ -27,7 +27,7 @@ export function logout() {
 
 export function getRSAkey() {
   return request({
-    url: '/user/rsakey',
+    url: '/user/pubkey',
     method: 'get'
   })
 }

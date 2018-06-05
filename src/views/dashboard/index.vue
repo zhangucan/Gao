@@ -36,7 +36,9 @@
                     <el-checkbox v-for="(item, index) in gridLayoutList" :label="item._id" :key="index">{{item.title}}</el-checkbox>
                   </el-checkbox-group>
                 </template>
-                <span v-else>{{ props.row.gridLayouts }}</span>
+                <template v-else>
+                  <span v-for="(item, index) in props.row.gridLayouts" :key="index">{{item.title}}</span>
+                </template>
               </el-form-item>
               <el-form-item>
                 <template v-if="props.row.edit">
@@ -143,24 +145,18 @@ export default {
       return temp.title
     },
     gridFormat(val) {
-      let temp = []
-      const _this = this
+      let temp = ''
       val.forEach((item, index) => {
-        const obj = _this.gridLayoutList.find(item2 => {
-          if (item === item2._id) return item2
-        })
-        if (obj) {
-          temp += obj.title
-          temp += ', '
-        }
+        temp += item.title
+        temp += ', '
       })
+      console.log(temp)
       return temp
     },
     async getList() {
       this.listLoading = true
       try {
         const temp = await userApi.getUserList(this.listQuery)
-        console.log(temp)
         this.list = temp.data.map(item => {
           item.edit = false
           item.originalPassword = item.password
@@ -246,7 +242,7 @@ export default {
   async mounted() {
     try {
       const data = await bigscreenApi.fetchLayoutList()
-      this.gridLayoutList = data.gridLayoutList
+      this.gridLayoutList = data.data
       await this.getList()
     } catch (error) {
       this.$message({

@@ -29,7 +29,6 @@ import CustomeMap from '../CustomeMap'
 import CustomeChart from '../CustomeChart'
 import MapShow from '../MapShow'
 import Sticky from '@/components/Sticky' // 粘性header组件
-import * as bigscreenApi from '../../api/bigscreen'
 export default {
   components: {
     MapShow,
@@ -55,11 +54,11 @@ export default {
       let gridType = ''
       this.view === 'CustomeMap' ? gridType = 'map' : gridType = 'chart'
       this.gridItem.gridType = gridType
-      bigscreenApi.saveGridItem(this.gridItem).then((err, data) => {
-        if (err) throw err
-        _this.$store.dispatch('SetCurrentComponent', this.gridItem.component)
-      }).catch(err => {
-        console.log(err)
+      _this.$store.dispatch('SaveGridItem')
+      _this.$store.dispatch('SetCurrentComponent', this.gridItem.component)
+      this.$notify.info({
+        title: '保存',
+        message: '请记得保存大屏'
       })
     }
   },
@@ -70,7 +69,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.state.bigscreen.gridItem.gridType === 'map' ? this.view = 'CustomeMap' : this.view = 'CustomeChart'
+    this.gridItem.gridType === 'map' ? this.view = 'CustomeMap' : this.view = 'CustomeChart'
   },
   beforeCreate() {
   }

@@ -9,10 +9,10 @@
           <el-option v-for="(item, index) in mapList" :key="index" :label="item.title" :value="item._id"></el-option>
         </el-select>
         <div class="editor-container">
-          <dnd-list :list1="gridItem.component.rasterList" :list2="rasterList" list1Title="已选择影像图层" list2Title="未选择影像图层"></dnd-list>
+          <dnd-list :list1="rasterList2" :list2="rasterList1" list1Title="已选择影像图层" list2Title="未选择影像图层"></dnd-list>
         </div>
         <div class="editor-container">
-          <dnd-list :list1="gridItem.component.vectorList" :list2="vectorList" list1Title="已选择矢量图层" list2Title="未选择矢量图层"></dnd-list>
+          <dnd-list :list1="vectorList2" :list2="vectorList1" list1Title="已选择矢量图层" list2Title="未选择矢量图层"></dnd-list>
         </div>
       </el-card>
     </el-col>
@@ -28,7 +28,7 @@
           <el-dropdown-menu class="no-padding" slot="dropdown">
             <el-dropdown-item>
               <el-radio-group style="padding: 10px;" v-model="currentRaster">
-                <el-radio  v-for="(item, index) in gridItem.component.rasterList" :key="index" :label="item.id">{{item.title}}</el-radio>
+                <el-radio  v-for="(item, index) in rasterList2" :key="index" :label="item._id">{{item.displayTime}}</el-radio>
               </el-radio-group>
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -40,23 +40,22 @@
           <el-dropdown-menu class="no-padding" slot="dropdown">
             <el-dropdown-item>
               <el-checkbox-group v-model="currentVector" style="padding: 5px 15px;">
-                <el-checkbox v-for="item in gridItem.component.vectorList" :label="item.id" :key="item.id">
-                  {{item.title}}
+                <el-checkbox v-for="item in vectorList2" :label="item._id" :key="item.id">
+                  {{item.type}}{{item.displayTime}}
                 </el-checkbox>
               </el-checkbox-group>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <map-show :key="mapKey" class="margin-top20" mapWidth="100%" mapHeight="650px" :raster-layer="currentRaster" :vector-list="tempVectorList" :raster-list="tempRasterList" :choose-list="currentVector" :lon="lon" :lat="lat"></map-show>
+        <map-show :key="mapKey" class="margin-top20" mapWidth="100%" mapHeight="650px" :raster-layer="currentRaster" :vector-list="vectorList" :raster-list="rasterList" :choose-list="currentVector" :lon="lon" :lat="lat"></map-show>
       </el-card>
     </el-col>
   </el-row>
 </template>
 <script>
 import * as mapApi from '../../api/map'
-import * as utils from '../../utils/index'
 // import Bus from '../../utils/bus'
-import shortid from 'shortid'
+import R from 'ramda'
 import DndList from '../DndList'
 import MapShow from '../MapShow'
 export default {
@@ -67,12 +66,15 @@ export default {
   data() {
     return {
       gridItem: this.$store.state.bigscreen.gridItem,
+      rasterList1: [],
+      vectorList1: [],
+      rasterList2: [],
+      vectorList2: [],
       rasterList: [],
       vectorList: [],
       tempRasterList: [],
       tempVectorList: [],
       rasterLayer: '',
-      chooseVector: [],
       mapList: [],
       mapKey: 0,
       currentRaster: '',
@@ -84,23 +86,25 @@ export default {
   watch: {
     'gridItem.component.id'(val, oldVal) {
       if (this.gridItem.component.id !== 'test' && this.gridItem.component.id !== '') {
-        this.mapKey += 1
-        this.gridItem.component.rasterList = []
-        this.gridItem.component.vectorList = []
         this.vectorList = []
         this.rasterList = []
+        this.rasterList2 = []
+        this.rasterList1 = []
+        this.vectorList1 = []
+        this.vectorList2 = []
+        this.$store.dispatch('SetScreenMap', val)
         this.fillData(val)
       }
     },
-    'gridItem.component.vectorList'() {
-      this.chooseVector = []
+    rasterList2(val) {
       this.currentRaster = ''
       this.currentVector = []
+      this.gridItem.component.rasterLayers = val
     },
-    'gridItem.component.rasterList'() {
-      this.chooseVector = []
+    vectorList2(val) {
       this.currentRaster = ''
       this.currentVector = []
+      this.gridItem.component.vectorLayers = val
     }
   },
   methods: {
@@ -109,33 +113,24 @@ export default {
       _this.tempRasterList = []
       _this.tempVectorList = []
       if (this.gridItem.component.id !== 'test' && this.gridItem.component.id !== '') {
-        mapApi.fetchMap({ _id: val }).then(data => {
-          if (data.map.rasterLayers.length > 0) {
-            data.map.rasterLayers.forEach(item => {
-              const id = shortid.generate()
-              item.id = id
-              item.title = item.displayTime
-              _this.gridItem.component.rasterList.forEach(item2 => {
-                if (item.address === item2.address && item.displayTime === item2.title) {
-                  item2.id = id
-                }
-              })
-              _this.tempRasterList.push(item)
-            })
-            this.rasterList = utils.diffArr(_this.tempRasterList, this.gridItem.component.rasterList)
-          }
-          if (data.vectorFeatures.length > 0) {
-            const _this = this
-            data.vectorFeatures.forEach((item, index) => {
-              const obj = {
-                id: item._id,
-                title: item.type + ' | ' + item.displayTime
-              }
-              obj.vectorFeatures = item[item.featureType]
-              _this.tempVectorList.push(obj)
-            })
-            this.vectorList = utils.diffArr(_this.tempVectorList, this.gridItem.component.vectorList)
-          }
+        mapApi.fetchMap(val).then(result => {
+          _this.lon = result.data.lon
+          _this.lat = result.data.lat
+          _this.rasterList = result.data.rasterLayers
+          _this.vectorList = result.data.vectorLayers
+          _this.rasterList2 = [..._this.gridItem.component.rasterLayers]
+          _this.rasterList1 = R.difference(result.data.rasterLayers)(_this.rasterList2)
+          _this.vectorList2 = [..._this.gridItem.component.vectorLayers]
+          const temp = result.data.vectorLayers.map(item => {
+            return {
+              _id: item._id,
+              displayTime: item.displayTime,
+              type: item.type,
+              featurecollection: item.featurecollection
+            }
+          })
+          _this.vectorList1 = R.difference(temp)(_this.vectorList2)
+          this.mapKey += 1
         })
       }
     }
@@ -148,7 +143,7 @@ export default {
       this.gridItem.component.id = ''
     }
     mapApi.fetchMapList().then((data) => {
-      _this.mapList = data.mapLsit
+      _this.mapList = data.data
     })
     this.mapKey += 1
   }

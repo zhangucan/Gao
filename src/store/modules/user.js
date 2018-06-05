@@ -3,6 +3,7 @@ import { getToken, setToken, removeToken, encrypt } from '@/utils/auth'
 
 const user = {
   state: {
+    _id: '',
     token: getToken(),
     name: '',
     avatar: '',
@@ -12,6 +13,9 @@ const user = {
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token
+    },
+    SET_USER_ID: (state, _id) => {
+      state._id = _id
     },
     SET_NAME: (state, name) => {
       state.name = name
@@ -34,6 +38,7 @@ const user = {
           const data = response.data
           setToken(data.token)
           commit('SET_TOKEN', data.token)
+          commit('SET_USER_ID', data._id)
           resolve()
         }).catch(error => {
           reject(error)
@@ -43,7 +48,7 @@ const user = {
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getInfo().then(response => {
+        getInfo(state._id).then(response => {
           const data = response.data
           if (data.role) { // 验证返回的roles是否是一个非空数组
             commit('SET_ROLES', data.role)
@@ -62,14 +67,15 @@ const user = {
     // 登出
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          removeToken()
-          resolve()
-        }).catch(error => {
+        commit('SET_TOKEN', '')
+        commit('SET_ROLES', [])
+        removeToken()
+        resolve()
+        try {
+          logout(state.token)
+        } catch (error) {
           reject(error)
-        })
+        }
       })
     },
 

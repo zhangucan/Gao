@@ -5,31 +5,38 @@
       <el-button type="danger" @click="deleteGridItem">删除</el-button>
       <el-button @click="returnBigScreenHome">返回</el-button>
     </sticky>
-
-    <div class="createPost-main-container">
-      <MDinput name="name" v-model="gridLayout.title" required :maxlength="100">标题</MDinput>
-      <grid-layout
-      :layout='layout'
-      :col-num='12'
-      :row-height='30'
-      :is-draggable='true'
-      :is-resizable='true'
-      :is-mirrored='false'
-      :vertical-compact='true'
-      :margin='[30,30,30,30]'
-      :use-css-transforms='true'
-    >
-        <grid-item class="grid" v-for='(item, index) in layout'
-          :x='item.x'
-          :y='item.y'
-          :w='item.w'
-          :h='item.h'
-          :i='item.i'
-          :key='index'>
-          <button class="pan-btn blue-btn detail" @click="showDetail(item)">修改内容</button>
-        </grid-item>
-      </grid-layout>
-    </div>
+    <el-row class="createPost-main-container">
+      <el-col :span="15" class="_content _panel">
+        <grid-layout
+        :layout='layout'
+        :col-num='12'
+        :row-height='30'
+        :is-draggable='true'
+        :is-resizable='true'
+        :is-mirrored='false'
+        :vertical-compact='true'
+        :margin='[30,30,30,30]'
+        :use-css-transforms='true'
+      >
+          <grid-item class="grid" v-for='(item, index) in layout'
+            :x='item.x'
+            :y='item.y'
+            :w='item.w'
+            :h='item.h'
+            :i='item.i'
+            :key='index'>
+            <button class="pan-btn blue-btn detail" @click="showDetail(item)">修改内容</button>
+            <div class="card-num">{{item.i}}</div>
+          </grid-item>
+        </grid-layout>
+      </el-col>
+      <el-col :span="8" :offset="1" class="_content">
+        <el-form ref="mapForm" :model="gridLayout" label-width="120px">
+          <MDinput name="name" style="margin-bottom: 80px;" v-model="gridLayout.title" required :maxlength="100">标题</MDinput>
+          <MDinput name="name" style="margin-bottom: 80px;" v-model="gridLayout.desc" required :maxlength="100">简单描述</MDinput>
+        </el-form>
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script>
@@ -43,58 +50,57 @@ export default {
   methods: {
     async confirmEdit() {
     },
-    cancelEdit() {
-      this.gridLayout.title = this.originTtitle
-    },
     async showDetail(item) {
-      this.loading = true
       const obj = {
         view: 'BigScreenItem'
       }
       await this.$store.dispatch('FetchGridItem', item._id)
-      await this.$store.dispatch('SetCurrentComponent', this.$store.state.bigscreen.gridItem.component)
-      this.loading = false
+      await this.$store.dispatch('SetCurrentComponent')
       await this.$store.dispatch('SetScreenView', obj)
     },
-    deleteGridItem() {
-      const obj = {
-        _id: this.gridLayout._id
-      }
+    async deleteGridItem() {
       const _this = this
-      bigscreenApi.deleteGridLayout(obj).then(err => {
-        if (err) {
-          _this.$message({
-            message: err,
-            type: 'warning'
-          })
-        }
+      try {
+        await bigscreenApi.deleteGridLayout(this.gridLayout._id)
+        _this.$notify({
+          title: '成功',
+          message: '删除成功',
+          type: 'success'
+        })
         const obj = {
           view: 'BigScreenCard'
         }
-        this.loading = true
         this.$store.dispatch('SetScreenView', obj)
-        this.loading = false
-      })
-    },
-    saveGridItem() {
-      this.$store.dispatch('SetGridLayout', this.gridLayout.title)
-      const obj = {
-        gridLayout: this.$store.state.bigscreen.gridLayout,
-        gridItems: this.$store.state.bigscreen.gridItems
+      } catch (error) {
+        _this.$notify.error({
+          title: '失败',
+          message: '删除失败'
+        })
       }
-      bigscreenApi.saveGridLayout(obj).then(err => {
-        if (err) throw err
-      }).catch(err => {
-        console.log(err)
-      })
+    },
+    async saveGridItem() {
+      if (this.gridLayout._id) {
+        try {
+          this.gridLayout.map = this.$store.state.bigscreen.currentMap
+          await bigscreenApi.updateGridLayout(this.gridLayout)
+          this.$notify({
+            title: '成功',
+            message: '更新成功',
+            type: 'success'
+          })
+        } catch (error) {
+          this.$notify.error({
+            title: '失败',
+            message: '更新失败'
+          })
+        }
+      }
     },
     returnBigScreenHome() {
       const obj = {
         view: 'BigScreenCard'
       }
-      this.loading = true
       this.$store.dispatch('SetScreenView', obj)
-      this.loading = false
     }
   },
   components: {
@@ -106,16 +112,17 @@ export default {
   data() {
     return {
       edit: false,
+      cardNum: 0,
       gridLayout: this.$store.state.bigscreen.gridLayout,
-      originTtitle: this.$store.state.bigscreen.gridLayout.title
+      min: this.$store.state.bigscreen.gridLayout.num
     }
   },
   computed: {
     layout() {
-      return [...this.$store.state.bigscreen.gridItems]
+      return [...this.gridLayout.gridItems]
     }
   },
-  beforeCreate() {
+  mounted() {
   }
 }
 </script>
@@ -135,6 +142,13 @@ export default {
   background: #adbed4;
   border-radius: 4px 
 }
+._panel{
+  border: solid;
+  border-radius: 5px;
+}
+._content{
+  min-height: 83vh;
+}
 .mixin-components-container {
   background-color: #f0f2f5;
   padding: 30px;
@@ -144,7 +158,11 @@ export default {
   min-height: 100px;
 }
 .detail{
-  float: left;
   padding: 5px 5px;
+}
+.card-num{
+  font-size: 150px;
+  text-align: center;
+  color: rgba(255,255,255,.5);
 }
 </style>

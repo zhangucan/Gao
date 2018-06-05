@@ -66,12 +66,12 @@ export default {
   methods: {
     changeMap(row) {
       this.$refs.vectorTable.clearSelection()
-      this.rasterLayer = row.id
+      this.rasterLayer = row._id
     },
     handleSelectionChange(selection) {
       // this.tempVectorList = val
       this.chooseList = selection.map(item => {
-        return item.id
+        return item._id
       })
     }
   },
@@ -107,13 +107,13 @@ export default {
   computed: {
     tempVectorList() {
       return this.vectorList.map(item => {
-        item.id = shortid.generate()
+        item._id = shortid.generate()
         return item
       })
     },
     tempRasterList() {
       return this.rasterList.map(item => {
-        item.id = shortid.generate()
+        item._id = shortid.generate()
         return item
       })
     }
